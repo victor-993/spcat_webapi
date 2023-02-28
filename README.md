@@ -1,4 +1,4 @@
-#Web API gap analysis
+# Web API gap analysis
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/CIAT-DAPA/spcat_webapi) ![](https://img.shields.io/github/v/tag/CIAT-DAPA/spcat_webapi)
 
@@ -8,13 +8,9 @@ This repository is a web API developed in Python which is responsible for collec
 
 This web api must be used in conjunction with the ORM that was developed for the project, which you can find in this [repository](https://github.com/CIAT-DAPA/spcat_orm).
 
-[TOCM]
+## Endpoint
 
-[TOC]
-
-##Endpoint
-
-###Get crops
+### Get crops
 
 Endpoint for retrieving crop data and corresponding subgroups in the database
 
@@ -24,7 +20,7 @@ Endpoint for retrieving crop data and corresponding subgroups in the database
 
 -----------
 
-###Get countries
+### Get countries
 
 Endpoint for retrieving countries data in the database
 
@@ -34,7 +30,7 @@ Endpoint for retrieving countries data in the database
 
 -------------
 
-###Get accessions
+### Get accessions
 
 Endpoint for retrieving accession data in the database
 
