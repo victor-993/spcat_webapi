@@ -90,7 +90,8 @@ class AccessionsByIDCrop(Resource):
                                 "source_database":x.source_database,
                                 "latitude":x.latitude,
                                 "longitude":x.longitude,
-                                "accession_id":x.accession_id}
+                                "accession_id":x.accession_id,
+                                "other_attributes":x.other_attributes}
                                 for x in accessions]
                     return json_data
                 else:
@@ -113,7 +114,8 @@ class AccessionsByIDCrop(Resource):
                                                         "source_database":x.source_database,
                                                         "latitude":x.latitude,
                                                         "longitude":x.longitude,
-                                                        "accession_id":x.accession_id}
+                                                        "accession_id":x.accession_id,
+                                                        "other_attributes":x.other_attributes}
                                                         for x in accessions]}
                             json_data.append(crop_data)
                     else:
@@ -201,7 +203,8 @@ class AccessionsByIDGroup(Resource):
                                 "source_database":x.source_database,
                                 "latitude":x.latitude,
                                 "longitude":x.longitude,
-                                "accession_id":x.accession_id}
+                                "accession_id":x.accession_id,
+                                "other_attributes":x.other_attributes}
                                 for x in accessions]
                     return json_data
                 else:
@@ -224,7 +227,8 @@ class AccessionsByIDGroup(Resource):
                                                         "source_database":x.source_database,
                                                         "latitude":x.latitude,
                                                         "longitude":x.longitude,
-                                                        "accession_id":x.accession_id}
+                                                        "accession_id":x.accession_id,
+                                                        "other_attributes":x.other_attributes}
                                                         for x in accessions]}
                             json_data.append(group_data)
                     else:
