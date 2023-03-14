@@ -7,6 +7,7 @@ from config import config
 
 from modules.country import Countries
 from modules.crops import Crops, Groups, GroupsByIDCrop
+from modules.accessions import AccessionsByIDCrop, AccessionsByIDGroup
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +17,9 @@ api.add_resource(Countries, '/countries')
 api.add_resource(Crops, '/crops')
 api.add_resource(Groups, '/groups')
 api.add_resource(GroupsByIDCrop, '/groupsbyids' , '/groupsbyid2/<string:id>')
+api.add_resource(AccessionsByIDCrop, '/accessionsbyidcrop' , '/accessionsbyidcrop/<string:id>')
+api.add_resource(AccessionsByIDGroup, '/accessionsbyidgroup' , '/accessionsbyidgroup/<string:id>')
+
 
 
 if __name__ == '__main__':
