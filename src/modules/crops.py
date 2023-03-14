@@ -139,7 +139,7 @@ class GroupsByIDCrop(Resource):
                     # Case 2: Single id provided, list groups for that crop
                     crop = Crop.objects(id=id).first()
                     if crop is None:
-                        return jsonify({"error": "Crop not found"}), 404
+                        return {"error": f"Crop with id {id} not found"}, 404
                     groups = Group.objects(crop=crop)
                     json_data = [{"id": str(x.id), "group_name": x.group_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id)}

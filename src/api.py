@@ -17,8 +17,8 @@ api.add_resource(Countries, '/countries')
 api.add_resource(Crops, '/crops')
 api.add_resource(Groups, '/groups')
 api.add_resource(GroupsByIDCrop, '/groupsbyids' , '/groupsbyid2/<string:id>')
-api.add_resource(AccessionsByIDCrop, '/accessionsbyidcrop' , '/accessionsbyidcrop/<string:id>')
-api.add_resource(AccessionsByIDGroup, '/accessionsbyidgroup' , '/accessionsbyidgroup/<string:id>')
+api.add_resource(AccessionsByIDCrop, '/accessionsbyidcrop/<string:id>')
+api.add_resource(AccessionsByIDGroup, '/accessionsbyidgroup/<string:id>')
 
 
 

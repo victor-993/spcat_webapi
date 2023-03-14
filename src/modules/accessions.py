@@ -81,7 +81,7 @@ class AccessionsByIDCrop(Resource):
                     # Case 2: Single id provided, list accession for that crop
                     crop = Crop.objects(id=id).first()
                     if crop is None:
-                        return jsonify({"error": "Crop not found"}), 404
+                        return {"error": f"Crop with id {id} not found"}, 404
                     accessions = Accession.objects(crop=crop)
                     json_data = [{"id": str(x.id), "species_name": x.species_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id),
@@ -194,7 +194,7 @@ class AccessionsByIDGroup(Resource):
                     # Case 2: Single id provided, list accession for that crop
                     group = Group.objects(id=id).first()
                     if group is None:
-                        return jsonify({"error": "Group not found"}), 404
+                        return {"error": f"Group with id {id} not found"}, 404
                     accessions = Accession.objects(landrace_group=group)
                     json_data = [{"id": str(x.id), "species_name": x.species_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id),
