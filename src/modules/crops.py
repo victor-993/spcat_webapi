@@ -125,15 +125,17 @@ class GroupsByIDCrop(Resource):
         id = request.args.get('id')
 
         if id is not None:
-            id_list = id.split(',')
+            
+            #first the blanks are eliminated, the ids are separated by commas and finally the repeated ones are eliminated.
+            id_list = list(set(id.replace(" ", "").split(',')))
+            print(id_list)
 
-            print(id.strip())
             if len(id_list) == 1:
-                if is_valid_object_id(id.strip()):
-                    # Case 2: Single id provided, list groups for that crop
-                    crop = Crop.objects(id=id.strip()).first()
+                if is_valid_object_id(id_list[0]):
+                    # Single id provided, list groups for that crop
+                    crop = Crop.objects(id=id_list[0]).first()
                     if crop is None:
-                        return {"error": f"Crop with id {id.strip()} not found"}, 404
+                        return {"error": f"Crop with id {id_list[0]} not found"}, 404
                     groups = Group.objects(crop=crop)
                     json_data = [{"id": str(x.id), "group_name": x.group_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id)}
@@ -142,23 +144,23 @@ class GroupsByIDCrop(Resource):
                 else:
                     return {'message': 'Invalid crop ID'}, 400
             else:
-                # Case 3: List of ids provided, list groups for each crop separately
+                # List of ids provided, list groups for each crop separately
                 json_data = []
                 for crop_id in id_list:     
-                    if is_valid_object_id(crop_id.strip()):
-                        crop = Crop.objects(id=crop_id.strip()).first()
+                    if is_valid_object_id(crop_id):
+                        crop = Crop.objects(id=crop_id).first()
                         if crop is None:
-                            json_data.append({"error": f"Crop with id {crop_id.strip()} not found"})
+                            json_data.append({"error": f"Crop with id {crop_id} not found"})
                         else:
                             groups = Group.objects(crop=crop)
-                            crop_data = {"crop_id": str(crop.id.strip()),
+                            crop_data = {"crop_id": str(crop.id),
                                         "groups": [{"id": str(x.id),
                                                     "group_name": x.group_name,
                                                     "ext_id": x.ext_id, "crop":str(x.crop.id)}
                                                     for x in groups]}
                             json_data.append(crop_data)
                     else:
-                        json_data.append({"crop_id": crop_id.strip(),"error": "Invalid crop ID"})
+                        json_data.append({"crop_id": crop_id,"error": "Invalid crop ID"})
                 return json_data
         else:
             return {'message': 'No crop IDs provided'}, 400
