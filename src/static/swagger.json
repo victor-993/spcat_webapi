@@ -18,7 +18,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:5000"
+      "url": "/"
     }
   ],
   "tags": [
@@ -124,7 +124,7 @@
             "name": "id",
             "in": "query",
             "description": "Crop IDs to filter by. e.g:64094b58b307071b4e72e908,64094b58b307071b4e72e907",
-            "required": false,
+            "required": true,
             "explode": true,
             "schema": {
               "type": "array",
@@ -183,7 +183,7 @@
             "name": "id",
             "in": "query",
             "description": "Crop IDs to filter by. e.g:64094b58b307071b4e72e908,64094b58b307071b4e72e907",
-            "required": false,
+            "required": true,
             "explode": true,
             "schema": {
               "type": "array",
@@ -242,7 +242,7 @@
             "name": "id",
             "in": "query",
             "description": "Group IDs to filter by. e.g:64094b58b307071b4e72e929,64094b58b307071b4e72e92f",
-            "required": false,
+            "required": true,
             "explode": true,
             "schema": {
               "type": "array",
