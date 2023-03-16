@@ -1,0 +1,447 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Gap Analysis Web API",
+    "description": "\n![GitHub release (latest by date)](https://img.shields.io/github/v/release/CIAT-DAPA/spcat_webapi) ![](https://img.shields.io/github/v/tag/CIAT-DAPA/spcat_webapi)\n\nThis is a web API developed in Python which is responsible for collecting information from the gap database. It contains the endpoints that will be in charge of obtaining the data of countries, crops and accessions, the get crops endpoint is in charge of obtaining the information of crops and groups, the get countries endpoint is in charge of obtaining the information of countries and the get accessions endpoint is in charge of obtaining all the information of accessions.",
+    "contact": {
+      "email": "v.hernandez@cgiar.org"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Gap Analysis Web API",
+    "url": "https://github.com/CIAT-DAPA/spcat_webapi"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "country",
+      "description": "Everything about countries"
+    },
+    {
+      "name": "crop",
+      "description": "Everything about crops an group"
+    },
+    {
+      "name": "accession",
+      "description": "Everything about accessions"
+    }
+  ],
+  "paths": {
+    "/api/v1/countries": {
+      "get": {
+        "tags": [
+          "country"
+        ],
+        "summary": "List countries",
+        "description": "Returns a list of all countries",
+        "operationId": "getCountries",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Country"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/crops": {
+      "get": {
+        "tags": [
+          "crop"
+        ],
+        "summary": "List crops",
+        "description": "Returns a list of all crops",
+        "operationId": "getCrops",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Crop"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/groups": {
+      "get": {
+        "tags": [
+          "crop"
+        ],
+        "summary": "List groups",
+        "description": "Returns a list of all groups",
+        "operationId": "getGroups",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Group"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/groupsbyids": {
+      "get": {
+        "tags": [
+          "crop"
+        ],
+        "summary": "Finds Groups by Crop Id(s)",
+        "description": "Multiple Crop Id(s) can be provided with comma separated strings",
+        "operationId": "getGroupsbyids",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Crop IDs to filter by. e.g:64094b58b307071b4e72e908,64094b58b307071b4e72e907",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "crop_id": {
+                        "type": "string",
+                        "description": "Id accession",
+                        "example": "64094b58b307071b4e72e908"
+                      },
+                      "groups": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Group"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid crop ID"
+          },
+          "404": {
+            "description": "Crop not found"
+          }
+        }
+      }
+    },
+    "/api/v1/accessionsbyidcrop": {
+      "get": {
+        "tags": [
+          "accession"
+        ],
+        "summary": "Finds Accessions by Crop Id(s)",
+        "description": "Multiple Crop Ids can be provided with comma separated strings",
+        "operationId": "getAccessionsbyidcrop",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Crop IDs to filter by. e.g:64094b58b307071b4e72e908,64094b58b307071b4e72e907",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "crop_id": {
+                        "type": "string",
+                        "description": "Id accession",
+                        "example": "64094b58b307071b4e72e908"
+                      },
+                      "groups": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Accession"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid crop ID"
+          },
+          "404": {
+            "description": "Crop not found"
+          }
+        }
+      }
+    },
+    "/api/v1/accessionsbyidgroup": {
+      "get": {
+        "tags": [
+          "accession"
+        ],
+        "summary": "Finds Accessions by Group Id(s)",
+        "description": "Multiple group Ids can be provided with comma separated strings",
+        "operationId": "getAccessionsbyidgroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Group IDs to filter by. e.g:64094b58b307071b4e72e929,64094b58b307071b4e72e92f",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "crop_id": {
+                        "type": "string",
+                        "description": "Id accession",
+                        "example": "64094b58b307071b4e72e908"
+                      },
+                      "groups": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Accession"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group ID"
+          },
+          "404": {
+            "description": "Group not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Country": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id Country.",
+            "example": "640945c244d7c73ce4090301"
+          },
+          "name": {
+            "type": "string",
+            "description": "Country name.",
+            "example": "Afghanistan"
+          },
+          "iso_2": {
+            "type": "string",
+            "description": "ISO 2 code (ISO 3166-1 alpha-2) to identify Country.",
+            "example": "AF"
+          }
+        },
+        "xml": {
+          "name": "country"
+        }
+      },
+      "Crop": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id crop",
+            "example": "64094b58b307071b4e72e907"
+          },
+          "name": {
+            "type": "string",
+            "description": "Crop name.",
+            "example": "african_maize"
+          },
+          "ext_id": {
+            "type": "string",
+            "description": "Extern Id to identify crop.",
+            "example": "1"
+          },
+          "base_name": {
+            "type": "string",
+            "description": "Base name of the crop.",
+            "example": "maize"
+          },
+          "app_name": {
+            "type": "string",
+            "description": "Application name of the crop.",
+            "example": "Maize (Africa)"
+          }
+        },
+        "xml": {
+          "name": "country"
+        }
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id group.",
+            "example": "64094b58b307071b4e72e92b"
+          },
+          "group_name": {
+            "type": "string",
+            "description": "Group name.",
+            "example": "g1"
+          },
+          "ext_id": {
+            "type": "string",
+            "description": "Extern Id to identify group.",
+            "example": "1_1"
+          },
+          "crop": {
+            "type": "string",
+            "description": "Id crop that the group belongs to.",
+            "example": "64094b58b307071b4e72e907"
+          }
+        },
+        "xml": {
+          "name": "group"
+        }
+      },
+      "Accession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id accession",
+            "example": "640961b88e2f0a85741ec2f6"
+          },
+          "species_name": {
+            "type": "string",
+            "description": "Name of the species of the accession.",
+            "example": "Musa sp."
+          },
+          "crop": {
+            "type": "string",
+            "description": "Id crop that the accession belongs to.",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "landrace_group": {
+            "type": "string",
+            "description": "Id group that the group belongs to.",
+            "example": "64094b58b307071b4e72e92f"
+          },
+          "institution_name": {
+            "type": "string",
+            "description": "Name of the institution that holds the accession.",
+            "example": "Bioversity International Musa Germplasm Transit Centre"
+          },
+          "source_database": {
+            "type": "string",
+            "description": "Name of the database where the accession was originally stored.",
+            "example": "genesys"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Latitude of the geographical location where the accession was collected.",
+            "example": -10.516667
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Longitude of the geographical location where the accession was collected.",
+            "example": 150.416667
+          },
+          "accession_id": {
+            "type": "string",
+            "description": "The identifier of the accession in source database.",
+            "example": "ITC1023"
+          },
+          "ext_id": {
+            "type": "string",
+            "description": "External identifier for the accession",
+            "example": "GNS_1"
+          },
+          "other_attributes": {
+            "description": "Additional attributes of the accession.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "xml": {
+          "name": "accession"
+        }
+      }
+    }
+  }
+}
