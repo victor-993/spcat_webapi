@@ -77,9 +77,6 @@ class Groups(Resource):
                 crop: 
                   type: string
                   description: Id crop that the group belongs to.
-                app_name: 
-                  type: string
-                  description: Application name of the crop.
         """
         q_set = None
         q_set = Group.objects()
@@ -102,7 +99,7 @@ class GroupsByIDCrop(Resource):
             description: Crop id(s)
             required: true
             type: string
-            example: 6035f5e5c6be2f14d07d6c7d or ["6035f5e5c6be2f14d07d6c7d", "6035f5e5c6be2f14d07d6c7e"]
+            example: 6035f5e5c6be2f14d07d6c7d or 6035f5e5c6be2f14d07d6c7d,6035f5e5c6be2f14d07d6c7e
         responses:
           200:
             description: 
@@ -121,9 +118,6 @@ class GroupsByIDCrop(Resource):
                 crop: 
                   type: string
                   description: Id crop that the group belongs to.
-                app_name: 
-                  type: string
-                  description: Application name of the crop.
         """
         q_set = None
         
@@ -133,13 +127,13 @@ class GroupsByIDCrop(Resource):
         if id is not None:
             id_list = id.split(',')
 
-            print(id)
+            print(id.strip())
             if len(id_list) == 1:
-                if is_valid_object_id(id):
+                if is_valid_object_id(id.strip()):
                     # Case 2: Single id provided, list groups for that crop
-                    crop = Crop.objects(id=id).first()
+                    crop = Crop.objects(id=id.strip()).first()
                     if crop is None:
-                        return {"error": f"Crop with id {id} not found"}, 404
+                        return {"error": f"Crop with id {id.strip()} not found"}, 404
                     groups = Group.objects(crop=crop)
                     json_data = [{"id": str(x.id), "group_name": x.group_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id)}
@@ -151,22 +145,20 @@ class GroupsByIDCrop(Resource):
                 # Case 3: List of ids provided, list groups for each crop separately
                 json_data = []
                 for crop_id in id_list:     
-                    if is_valid_object_id(crop_id):
-                        crop = Crop.objects(id=crop_id).first()
+                    if is_valid_object_id(crop_id.strip()):
+                        crop = Crop.objects(id=crop_id.strip()).first()
                         if crop is None:
-                            json_data.append({"error": f"Crop with id {crop_id} not found"})
+                            json_data.append({"error": f"Crop with id {crop_id.strip()} not found"})
                         else:
                             groups = Group.objects(crop=crop)
-                            crop_data = {"crop_id": str(crop.id),
+                            crop_data = {"crop_id": str(crop.id.strip()),
                                         "groups": [{"id": str(x.id),
                                                     "group_name": x.group_name,
-                                                    "ext_id": x.ext_id}
+                                                    "ext_id": x.ext_id, "crop":str(x.crop.id)}
                                                     for x in groups]}
                             json_data.append(crop_data)
                     else:
-                        json_data.append({"crop_id": crop_id,"error": "Invalid crop ID"})
+                        json_data.append({"crop_id": crop_id.strip(),"error": "Invalid crop ID"})
                 return json_data
-        else:            
-            q_set = Group.objects()
-            json_data = [{"id":str(x.id),"group_name":x.group_name,"ext_id":x.ext_id, "crop":str(x.crop.id)} for x in q_set]
-            return json_data
+        else:
+            return {'message': 'No crop IDs provided'}, 400

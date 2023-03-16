@@ -77,11 +77,11 @@ class AccessionsByIDCrop(Resource):
 
             print(id)
             if len(id_list) == 1:
-                if is_valid_object_id(id):
+                if is_valid_object_id(id.strip()):
                     # Case 2: Single id provided, list accession for that crop
-                    crop = Crop.objects(id=id).first()
+                    crop = Crop.objects(id=id.strip()).first()
                     if crop is None:
-                        return {"error": f"Crop with id {id} not found"}, 404
+                        return {"error": f"Crop with id {id.strip()} not found"}, 404
                     accessions = Accession.objects(crop=crop)
                     json_data = [{"id": str(x.id), "species_name": x.species_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id),
@@ -100,10 +100,10 @@ class AccessionsByIDCrop(Resource):
                 # Case 3: List of ids provided, list accession for each crop separately
                 json_data = []
                 for crop_id in id_list:     
-                    if is_valid_object_id(crop_id):
-                        crop = Crop.objects(id=crop_id).first()
+                    if is_valid_object_id(crop_id.strip()):
+                        crop = Crop.objects(id=crop_id.strip()).first()
                         if crop is None:
-                            json_data.append({"error": f"Crop with id {crop_id} not found"})
+                            json_data.append({"error": f"Crop with id {crop_id.strip()} not found"})
                         else:
                             accessions = Accession.objects(crop=crop)
                             crop_data = {"crop_id": str(crop.id),
@@ -119,7 +119,7 @@ class AccessionsByIDCrop(Resource):
                                                         for x in accessions]}
                             json_data.append(crop_data)
                     else:
-                        json_data.append({"crop_id": crop_id,"error": "Invalid crop ID"})
+                        json_data.append({"crop_id": crop_id.strip(),"error": "Invalid crop ID"})
                 return json_data
         else: 
             return {'message': 'Invalid crop ID'}, 400
@@ -190,11 +190,11 @@ class AccessionsByIDGroup(Resource):
 
             print(id)
             if len(id_list) == 1:
-                if is_valid_object_id(id):
+                if is_valid_object_id(id.strip()):
                     # Case 2: Single id provided, list accession for that crop
-                    group = Group.objects(id=id).first()
+                    group = Group.objects(id=id.strip()).first()
                     if group is None:
-                        return {"error": f"Group with id {id} not found"}, 404
+                        return {"error": f"Group with id {id.strip()} not found"}, 404
                     accessions = Accession.objects(landrace_group=group)
                     json_data = [{"id": str(x.id), "species_name": x.species_name,
                                 "ext_id": x.ext_id, "crop": str(x.crop.id),
@@ -214,12 +214,12 @@ class AccessionsByIDGroup(Resource):
                 json_data = []
                 for group_id in id_list:     
                     if is_valid_object_id(group_id):
-                        group = Group.objects(id=group_id).first()
+                        group = Group.objects(id=group_id.strip()).first()
                         if group is None:
-                            json_data.append({"error": f"Group with id {group_id} not found"})
+                            json_data.append({"error": f"Group with id {group_id.strip()} not found"})
                         else:
                             accessions = Accession.objects(landrace_group=group)
-                            group_data = {"group_id": str(group.id),
+                            group_data = {"group_id": str(group.id.strip()),
                                         "accessions": [{"id": str(x.id), "species_name": x.species_name,
                                                         "ext_id": x.ext_id, "crop": str(x.crop.id),
                                                         "landrace_group":str(x.landrace_group.id), 
@@ -232,7 +232,7 @@ class AccessionsByIDGroup(Resource):
                                                         for x in accessions]}
                             json_data.append(group_data)
                     else:
-                        json_data.append({"crop_id": group_id,"error": "Invalid group ID"})
+                        json_data.append({"crop_id": group_id.strip(),"error": "Invalid group ID"})
                 return json_data
         else: 
             return {'message': 'Invalid group ID'}, 400
