@@ -127,7 +127,7 @@ class GroupsByIDCrop(Resource):
         if id is not None:
             
             #first the blanks are eliminated, the ids are separated by commas and finally the repeated ones are eliminated.
-            id_list = list(set(id.replace(" ", "").split(',')))
+            id_list = list(dict.fromkeys(id.replace(" ", "").split(',')))
             print(id_list)
 
             if len(id_list) == 1:
