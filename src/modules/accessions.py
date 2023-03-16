@@ -72,7 +72,7 @@ class AccessionsByIDCrop(Resource):
         id = request.args.get('id')
 
         if id is not None:
-            id_list = list(set(id.replace(" ", "").split(',')))
+            id_list = list(dict.fromkeys(id.replace(" ", "").split(',')))
 
             print(id_list)
             if len(id_list) == 1:
@@ -184,7 +184,7 @@ class AccessionsByIDGroup(Resource):
         id = request.args.get('id')
 
         if id is not None:
-            id_list = list(set(id.replace(" ", "").split(',')))
+            id_list = list(dict.fromkeys(id.replace(" ", "").split(',')))
 
             print(id_list)
             if len(id_list) == 1:
@@ -206,7 +206,7 @@ class AccessionsByIDGroup(Resource):
                                 for x in accessions]
                     return json_data
                 else:
-                    return {'message': 'Invalid crop ID'}, 400
+                    return {'message': 'Invalid group ID'}, 400
             else:
                 # List of ids provided, list accession for each group separately
                 json_data = []
@@ -230,7 +230,7 @@ class AccessionsByIDGroup(Resource):
                                                         for x in accessions]}
                             json_data.append(group_data)
                     else:
-                        json_data.append({"crop_id": group_id,"error": "Invalid group ID"})
+                        json_data.append({"group_id": group_id,"error": "Invalid group ID"})
                 return json_data
         else: 
             return {'message': 'Invalid group ID'}, 400
