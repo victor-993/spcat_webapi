@@ -31,12 +31,12 @@ def home():
 def send_static(path):
     return send_from_directory('static',path)
 
-api.add_resource(Countries, '/countries')
-api.add_resource(Crops, '/crops')
-api.add_resource(Groups, '/groups')
-api.add_resource(GroupsByIDCrop, '/groupsbyids' , '/groupsbyids/<string:id>')
-api.add_resource(AccessionsByIDCrop, '/accessionsbyidcrop', '/accessionsbyidcrop/<string:id>')
-api.add_resource(AccessionsByIDGroup, '/accessionsbyidgroup', '/accessionsbyidgroup/<string:id>')
+api.add_resource(Countries, '/api/v1/countries')
+api.add_resource(Crops, '/api/v1/crops')
+api.add_resource(Groups, '/api/v1/groups')
+api.add_resource(GroupsByIDCrop, '/api/v1/groupsbyids')
+api.add_resource(AccessionsByIDCrop, '/api/v1/accessionsbyidcrop')
+api.add_resource(AccessionsByIDGroup, '/api/v1/accessionsbyidgroup')
 
 
 

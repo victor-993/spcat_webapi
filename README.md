@@ -70,7 +70,7 @@ for crops and groups three endpoints were created, one lists all the crops regis
 
 1. endpoint to list the crops, it does not receive any parameters: 
 
-    route: `/crops`
+    route: `/api/v1/crops`
 
     response: 
 
@@ -89,7 +89,7 @@ for crops and groups three endpoints were created, one lists all the crops regis
 
 2. endpoint to list all groups, it does not receive any parameters: 
 
-    route `/groups`
+    route `/api/v1/groups`
 
     response:
 
@@ -107,8 +107,8 @@ for crops and groups three endpoints were created, one lists all the crops regis
 
 3. endpoint to list all the groups of one or more crops, it receives a parameter that is id this can be one or more ids of crops for which you must first consult the endpoint that lists the crops.
 
-    route: `/groupsbyids?id=64094b58b307071b4e72e908`  or 
-    `/groupsbyids?id=64094b58b307071b4e72e908,64094b58b307071b4e72e907,...`
+    route: `/api/v1/groupsbyids?id=64094b58b307071b4e72e908`  or 
+    `/api/v1/groupsbyids?id=64094b58b307071b4e72e908,64094b58b307071b4e72e907,...`
 
     response:
     
@@ -171,7 +171,7 @@ An endpoint was created from which all the countries registered in the database 
 
 endpoint:
 
-`/countries`
+`/api/v1/countries`
 
 response:
 
@@ -206,8 +206,8 @@ Endpoints for retrieving accession data in the database
 
 endpoint to list accessions from crop id(s)
 
-route: `/accessionsbyidcrop?id=64094b58b307071b4e72e908` or
-`/accessionsbyidcrop?id=64094b58b307071b4e72e908,64094b58b307071b4e72e907,...`
+route: `/api/v1/accessionsbyidcrop?id=64094b58b307071b4e72e908` or
+`/api/v1/accessionsbyidcrop?id=64094b58b307071b4e72e908,64094b58b307071b4e72e907,...`
 
 response
 
@@ -270,8 +270,8 @@ if two or more ids are sent
        
 endpoint to list accessions from group id(s)
 
-route: `/accessionsbyidgroup?id=64094b58b307071b4e72e929` or
-`/accessionsbyidgroup?id=64094b58b307071b4e72e929,64094b58b307071b4e72e92f,...`
+route: `/api/v1/accessionsbyidgroup?id=64094b58b307071b4e72e929` or
+`/api/v1/accessionsbyidgroup?id=64094b58b307071b4e72e929,64094b58b307071b4e72e92f,...`
 
 response
 
