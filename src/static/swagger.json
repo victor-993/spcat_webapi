@@ -91,40 +91,15 @@
         "tags": [
           "crop"
         ],
-        "summary": "List groups",
-        "description": "Returns a list of all groups",
+        "summary": "List groups or finds Groups by Crop Id(s)",
+        "description": "If no parameter is sent it returns a list of all groups, if one or more crop ID(s) are sent it will list the groups for those crops. Multiple crop ID(s) can be provided with comma separated strings.",
         "operationId": "getGroups",
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Group"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/groupsbyids": {
-      "get": {
-        "tags": [
-          "crop"
-        ],
-        "summary": "Finds Groups by Crop Id(s)",
-        "description": "Multiple Crop Id(s) can be provided with comma separated strings",
-        "operationId": "getGroupsbyids",
         "parameters": [
           {
             "name": "id",
             "in": "query",
             "description": "Crop IDs to filter by. e.g:64094b58b307071b4e72e908,64094b58b307071b4e72e907",
-            "required": true,
+            "required": false,
             "explode": true,
             "schema": {
               "type": "array",

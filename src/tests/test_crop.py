@@ -83,7 +83,7 @@ class GroupsByIDCropTestCase(unittest.TestCase):
 
     def test_get_groups_by_crop_id(self):
         # Test with single valid crop id
-        response = self.app.get('/api/v1/groupsbyids?id=' + str(self.crop1.id))
+        response = self.app.get('/api/v1/groups?id=' + str(self.crop1.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertEqual(response.json[0]['group_name'], 'Group1')
@@ -94,7 +94,7 @@ class GroupsByIDCropTestCase(unittest.TestCase):
         self.assertEqual(response.json[1]['crop'], str(self.crop1.id))
 
         # Test with multiple valid crop ids
-        response = self.app.get('/api/v1/groupsbyids?id=' + str(self.crop1.id) + ',' + str(self.crop2.id))
+        response = self.app.get('/api/v1/groups?id=' + str(self.crop1.id) + ',' + str(self.crop2.id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertEqual(response.json[0]['groups'][0]['group_name'], 'Group1')
@@ -105,11 +105,11 @@ class GroupsByIDCropTestCase(unittest.TestCase):
         self.assertEqual(response.json[1]['groups'][0]['crop'], str(self.crop2.id))
         
         # Test with invalid crop id
-        response = self.app.get('/api/v1/groupsbyids?id=invalid_id')
+        response = self.app.get('/api/v1/groups?id=invalid_id')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json['message'], 'Invalid crop ID')
 
-        response = self.app.get('/api/v1/groupsbyids?id=640961b88e2f0a8574155555')
+        response = self.app.get('/api/v1/groups?id=640961b88e2f0a8574155555')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json['error'], 'Crop with id 640961b88e2f0a8574155555 not found')
 
