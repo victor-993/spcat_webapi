@@ -111,36 +111,44 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "crop_id": {
-                        "type": "string",
-                        "description": "Id accession",
-                        "example": "64094b58b307071b4e72e908"
-                      },
-                      "groups": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Group"
-                        }
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Group"
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GroupByIdCrop"
                       }
                     }
+                  ]
+                },
+                "examples": {
+                  "without id or one": {
+                    "$ref": "#/components/examples/ExampleGroup"
+                  },
+                  "two or more ids": {
+                    "$ref": "#/components/examples/ExampleGroupByIdCrop"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid crop ID"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Crop not found"
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -174,32 +182,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "crop_id": {
-                        "type": "string",
-                        "description": "Id accession",
-                        "example": "64094b58b307071b4e72e908"
-                      },
-                      "groups": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Accession"
-                        }
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Accession"
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AccessionByIdCrop"
                       }
                     }
+                  ]
+                },
+                "examples": {
+                  "one id": {
+                    "$ref": "#/components/examples/ExampleAccession"
+                  },
+                  "two or more ids": {
+                    "$ref": "#/components/examples/ExampleAccessionByIdCrop"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid crop ID"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Crop not found"
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -233,32 +249,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "crop_id": {
-                        "type": "string",
-                        "description": "Id accession",
-                        "example": "64094b58b307071b4e72e908"
-                      },
-                      "groups": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Accession"
-                        }
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Accession"
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AccessionByIdGroup"
                       }
                     }
+                  ]
+                },
+                "examples": {
+                  "one id": {
+                    "$ref": "#/components/examples/ExampleAccession"
+                  },
+                  "two or more ids": {
+                    "$ref": "#/components/examples/ExampleAccessionByIdGroup"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid group ID"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Group not found"
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -416,6 +440,201 @@
         "xml": {
           "name": "accession"
         }
+      },
+      "GroupByIdCrop": {
+        "type": "object",
+        "properties": {
+          "crop_id": {
+            "type": "string",
+            "description": "Id crop",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            }
+          }
+        }
+      },
+      "AccessionByIdCrop": {
+        "type": "object",
+        "properties": {
+          "crop_id": {
+            "type": "string",
+            "description": "Id Crop",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Accession"
+            }
+          }
+        }
+      },
+      "AccessionByIdGroup": {
+        "type": "object",
+        "properties": {
+          "group_id": {
+            "type": "string",
+            "description": "Id Group",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Accession"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "A description of the error that occurred."
+          }
+        }
+      }
+    },
+    "responses": {
+      "ServerError": {
+        "description": "An unexpected error occurred on the server.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "Internal server error."
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "The request was invalid or could not be understood by the server.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "An unexpected error occurred while processing the request."
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The requested resource was not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "Id not found."
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "ExampleGroup": {
+        "value": [
+          {
+            "id": "64094b58b307071b4e72e92b",
+            "group_name": "g1",
+            "ext_id": "1_1",
+            "crop": "64094b58b307071b4e72e907"
+          }
+        ]
+      },
+      "ExampleGroupByIdCrop": {
+        "value": [
+          {
+            "crop_id": "64094b58b307071b4e72e908",
+            "groups": [
+              {
+                "id": "64094b58b307071b4e72e92b",
+                "group_name": "g1",
+                "ext_id": "1_1",
+                "crop": "64094b58b307071b4e72e907"
+              }
+            ]
+          }
+        ]
+      },
+      "ExampleAccession": {
+        "value": [
+          {
+            "id": "640961b88e2f0a85741ec2f6",
+            "species_name": "Musa sp.",
+            "crop": "64094b58b307071b4e72e908",
+            "landrace_group": "64094b58b307071b4e72e92f",
+            "institution_name": "Bioversity International Musa Germplasm Transit Centre",
+            "source_database": "genesys",
+            "latitude": -10.516667,
+            "longitude": 150.416667,
+            "accession_id": "ITC1023",
+            "ext_id": "GNS_1",
+            "other_attributes": {
+              "attribute1": "value1",
+              "attribute2": "value2"
+            }
+          }
+        ]
+      },
+      "ExampleAccessionByIdCrop": {
+        "value": [
+          {
+            "crop_id": "64094b58b307071b4e72e908",
+            "accessions": [
+              {
+                "id": "640961b88e2f0a85741ec2f6",
+                "species_name": "Musa sp.",
+                "crop": "64094b58b307071b4e72e908",
+                "landrace_group": "64094b58b307071b4e72e92f",
+                "institution_name": "Bioversity International Musa Germplasm Transit Centre",
+                "source_database": "genesys",
+                "latitude": -10.516667,
+                "longitude": 150.416667,
+                "accession_id": "ITC1023",
+                "ext_id": "GNS_1",
+                "other_attributes": {
+                  "attribute1": "value1",
+                  "attribute2": "value2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "ExampleAccessionByIdGroup": {
+        "value": [
+          {
+            "group_id": "64094b58b307071b4e72e92f",
+            "accessions": [
+              {
+                "id": "640961b88e2f0a85741ec2f6",
+                "species_name": "Musa sp.",
+                "crop": "64094b58b307071b4e72e908",
+                "landrace_group": "64094b58b307071b4e72e92f",
+                "institution_name": "Bioversity International Musa Germplasm Transit Centre",
+                "source_database": "genesys",
+                "latitude": -10.516667,
+                "longitude": 150.416667,
+                "accession_id": "ITC1023",
+                "ext_id": "GNS_1",
+                "other_attributes": {
+                  "attribute1": "value1",
+                  "attribute2": "value2"
+                }
+              }
+            ]
+          }
+        ]
       }
     }
   }

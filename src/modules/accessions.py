@@ -94,7 +94,7 @@ class AccessionsByIDCrop(Resource):
                                 for x in accessions]
                     return json_data
                 else:
-                    return {'message': 'Invalid crop ID'}, 400
+                    return {'error': 'Invalid crop ID'}, 400
             else:
                 # List of ids provided, list accession for each crop separately
                 json_data = []
@@ -121,7 +121,7 @@ class AccessionsByIDCrop(Resource):
                         json_data.append({"crop_id": crop_id,"error": "Invalid crop ID"})
                 return json_data
         else: 
-            return {'message': 'Invalid crop ID'}, 400
+            return {'error': 'Invalid crop ID'}, 400
         
 
 class AccessionsByIDGroup(Resource):
@@ -206,7 +206,7 @@ class AccessionsByIDGroup(Resource):
                                 for x in accessions]
                     return json_data
                 else:
-                    return {'message': 'Invalid group ID'}, 400
+                    return {'error': 'Invalid group ID'}, 400
             else:
                 # List of ids provided, list accession for each group separately
                 json_data = []
@@ -233,4 +233,4 @@ class AccessionsByIDGroup(Resource):
                         json_data.append({"group_id": group_id,"error": "Invalid group ID"})
                 return json_data
         else: 
-            return {'message': 'Invalid group ID'}, 400
+            return {'error': 'Invalid group ID'}, 400

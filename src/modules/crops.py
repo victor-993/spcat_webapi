@@ -108,7 +108,7 @@ class Groups(Resource):
                                 for x in groups]
                     return json_data
                 else:
-                    return {'message': 'Invalid crop ID'}, 400
+                    return {'error': 'Invalid crop ID'}, 400
             else:
                 # List of ids provided, list groups for each crop separately
                 json_data = []

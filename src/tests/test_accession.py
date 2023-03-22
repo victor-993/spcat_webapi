@@ -83,7 +83,7 @@ class AccessionsByIDCropTestCase(unittest.TestCase):
         # Test with invalid crop id
         response = self.app.get('/api/v1/accessionsbyidcrop?id=invalid_id')
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json['message'], 'Invalid crop ID')
+        self.assertEqual(response.json['error'], 'Invalid crop ID')
 
         response = self.app.get('/api/v1/accessionsbyidcrop?id=640961b88e2f0a8574155555')
         self.assertEqual(response.status_code, 404)
@@ -115,7 +115,7 @@ class AccessionsByIDCropTestCase(unittest.TestCase):
         # Test with invalid crop id
         response = self.app.get('/api/v1/accessionsbyidgroup?id=invalid_id')
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json['message'], 'Invalid group ID')
+        self.assertEqual(response.json['error'], 'Invalid group ID')
 
         response = self.app.get('/api/v1/accessionsbyidgroup?id=640961b88e2f0a8574155555')
         self.assertEqual(response.status_code, 404)
