@@ -3,18 +3,11 @@
   "info": {
     "title": "Gap Analysis Web API",
     "description": "\n![GitHub release (latest by date)](https://img.shields.io/github/v/release/CIAT-DAPA/spcat_webapi) ![](https://img.shields.io/github/v/tag/CIAT-DAPA/spcat_webapi)\n\nThis is a web API developed in Python which is responsible for collecting information from the gap database. It contains the endpoints that will be in charge of obtaining the data of countries, crops and accessions, the get crops endpoint is in charge of obtaining the information of crops and groups, the get countries endpoint is in charge of obtaining the information of countries and the get accessions endpoint is in charge of obtaining all the information of accessions.",
-    "contact": {
-      "email": "v.hernandez@cgiar.org"
-    },
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     },
     "version": "1.0.0"
-  },
-  "externalDocs": {
-    "description": "Find out more about Gap Analysis Web API",
-    "url": "https://github.com/CIAT-DAPA/spcat_webapi"
   },
   "servers": [
     {
@@ -131,10 +124,10 @@
                   ]
                 },
                 "examples": {
-                  "without id or one": {
+                  "without id": {
                     "$ref": "#/components/examples/ExampleGroup"
                   },
-                  "two or more ids": {
+                  "one or more ids": {
                     "$ref": "#/components/examples/ExampleGroupByIdCrop"
                   }
                 }
@@ -158,7 +151,7 @@
         "tags": [
           "accession"
         ],
-        "summary": "Finds Accessions by Crop Id(s)",
+        "summary": "Finds Accessions by Crop Id(s) and Iso 2 country",
         "description": "Multiple Crop Ids can be provided with comma separated strings",
         "operationId": "getAccessionsbyidcrop",
         "parameters": [
@@ -174,6 +167,16 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "name": "iso",
+            "in": "query",
+            "description": "Iso 2 country to filter by. e.g:AR",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -182,29 +185,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Accession"
-                      }
-                    },
-                    {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/AccessionByIdCrop"
                       }
                     }
-                  ]
-                },
-                "examples": {
-                  "one id": {
-                    "$ref": "#/components/examples/ExampleAccession"
-                  },
-                  "two or more ids": {
-                    "$ref": "#/components/examples/ExampleAccessionByIdCrop"
-                  }
-                }
               }
             }
           },
@@ -241,6 +226,16 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "name": "iso",
+            "in": "query",
+            "description": "Iso 2 country to filter by. e.g:AR",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -249,29 +244,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Accession"
-                      }
-                    },
-                    {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/AccessionByIdGroup"
                       }
                     }
-                  ]
-                },
-                "examples": {
-                  "one id": {
-                    "$ref": "#/components/examples/ExampleAccession"
-                  },
-                  "two or more ids": {
-                    "$ref": "#/components/examples/ExampleAccessionByIdGroup"
-                  }
-                }
               }
             }
           },
@@ -397,6 +374,11 @@
             "description": "Id group that the group belongs to.",
             "example": "64094b58b307071b4e72e92f"
           },
+          "country": {
+            "type": "string",
+            "description": "Iso 2 that the country belongs to.",
+            "example": "AR"
+          },
           "institution_name": {
             "type": "string",
             "description": "Name of the institution that holds the accession.",
@@ -465,7 +447,7 @@
             "description": "Id Crop",
             "example": "64094b58b307071b4e72e908"
           },
-          "groups": {
+          "accessions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Accession"
@@ -481,7 +463,7 @@
             "description": "Id Group",
             "example": "64094b58b307071b4e72e908"
           },
-          "groups": {
+          "accessions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Accession"
@@ -573,6 +555,7 @@
             "species_name": "Musa sp.",
             "crop": "64094b58b307071b4e72e908",
             "landrace_group": "64094b58b307071b4e72e92f",
+            "country": "AR",
             "institution_name": "Bioversity International Musa Germplasm Transit Centre",
             "source_database": "genesys",
             "latitude": -10.516667,
@@ -595,6 +578,7 @@
                 "id": "640961b88e2f0a85741ec2f6",
                 "species_name": "Musa sp.",
                 "crop": "64094b58b307071b4e72e908",
+                "country": "AR",
                 "landrace_group": "64094b58b307071b4e72e92f",
                 "institution_name": "Bioversity International Musa Germplasm Transit Centre",
                 "source_database": "genesys",
@@ -621,6 +605,7 @@
                 "species_name": "Musa sp.",
                 "crop": "64094b58b307071b4e72e908",
                 "landrace_group": "64094b58b307071b4e72e92f",
+                "country": "AR",
                 "institution_name": "Bioversity International Musa Germplasm Transit Centre",
                 "source_database": "genesys",
                 "latitude": -10.516667,
