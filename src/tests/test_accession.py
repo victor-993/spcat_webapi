@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import unittest
 from api import app
-from ormgap import Crop, Group, Accession
+from ormgap import Crop, Group, Accession, Country
 from mongoengine import connect
 
 class AccessionsByIDCropTestCase(unittest.TestCase):
@@ -20,33 +20,37 @@ class AccessionsByIDCropTestCase(unittest.TestCase):
         cls.group3 = Group(group_name='Group3', ext_id='3', crop=cls.crop2).save()
         cls.group4 = Group(group_name='Group4', ext_id='4', crop=cls.crop2).save()
 
+        cls.country1 = Country(name='Colombia', iso_2='CO').save()
+        cls.country2 = Country(name='United States', iso_2='US').save()
+        cls.country3 = Country(name='Canada', iso_2='CA').save()
+
         cls.accession1 = Accession(species_name='Test species 1', institution_name='Test institution 1',
                                     latitude=1.0, longitude=1.0, ext_id='Test ext ID 1', 
-                                    crop= cls.crop1, landrace_group=cls.group1, 
+                                    crop= cls.crop1, landrace_group=cls.group1, country=cls.country1,
                                     accession_id='Test accession ID 1', other_attributes={'Test attribute': 'Test value'})
         cls.accession1.save()
 
         cls.accession2 = Accession(species_name='Test species 2', institution_name='Test institution 2',
                                     latitude=2.0, longitude=2.0, ext_id='Test ext ID 2',
-                                    crop= cls.crop1, landrace_group=cls.group1,
+                                    crop= cls.crop1, landrace_group=cls.group1, country=cls.country1,
                                     accession_id='Test accession ID 2', other_attributes={'Test attribute': 'Test value'})
         cls.accession2.save()
 
         cls.accession3 = Accession(species_name='Test species 3', institution_name='Test institution 3',
                                     latitude=2.0, longitude=2.0, ext_id='Test ext ID 3',
-                                    crop= cls.crop1, landrace_group=cls.group2, 
+                                    crop= cls.crop1, landrace_group=cls.group2,  country=cls.country2,
                                     accession_id='Test accession ID 3', other_attributes={'Test attribute': 'Test value'})
         cls.accession3.save()
 
         cls.accession4 = Accession(species_name='Test species 4', institution_name='Test institution 4',
                                     latitude=2.0, longitude=2.0, ext_id='Test ext ID 4',
-                                    crop= cls.crop2, landrace_group=cls.group3, 
+                                    crop= cls.crop2, landrace_group=cls.group3,  country=cls.country3,
                                     accession_id='Test accession ID 4', other_attributes={'Test attribute': 'Test value'})
         cls.accession4.save()
 
         cls.accession5 = Accession(species_name='Test species 5', institution_name='Test institution 5',
                                     latitude=2.0, longitude=2.0, ext_id='Test ext ID 5',
-                                    crop= cls.crop2, landrace_group=cls.group4, 
+                                    crop= cls.crop2, landrace_group=cls.group4,  country=cls.country1,
                                     accession_id='Test accession ID 5', other_attributes={'Test attribute': 'Test value'})
         cls.accession5.save()
 
@@ -59,65 +63,75 @@ class AccessionsByIDCropTestCase(unittest.TestCase):
 
     def test_get_accession_by_crop_id(self):
         # Test with single valid crop id
-        response = self.app.get('/api/v1/accessionsbyidcrop?id=' + str(self.crop1.id))        
+        response = self.app.get('/api/v1/accessionsbyidcrop?id=' + str(self.crop1.id) + "&iso=" + self.country1.iso_2)        
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json), 3)
-        self.assertEqual(response.json[0]['species_name'], 'Test species 1')
-        self.assertEqual(response.json[0]['ext_id'], 'Test ext ID 1')
-        self.assertEqual(response.json[0]['crop'], str(self.crop1.id))
-        self.assertEqual(response.json[1]['species_name'], 'Test species 2')
-        self.assertEqual(response.json[1]['ext_id'], 'Test ext ID 2')
-        self.assertEqual(response.json[1]['crop'], str(self.crop1.id))
+        self.assertEqual(len(response.json[0]['accessions']), 2)
+        self.assertEqual(response.json[0]['accessions'][0]['species_name'], 'Test species 1')
+        self.assertEqual(response.json[0]['accessions'][0]['ext_id'], 'Test ext ID 1')
+        self.assertEqual(response.json[0]['accessions'][0]['crop'], str(self.crop1.id))
+        self.assertEqual(response.json[0]['accessions'][1]['species_name'], 'Test species 2')
+        self.assertEqual(response.json[0]['accessions'][1]['ext_id'], 'Test ext ID 2')
+        self.assertEqual(response.json[0]['accessions'][1]['crop'], str(self.crop1.id))
 
         # Test with multiple valid crop ids
-        response = self.app.get('/api/v1/accessionsbyidcrop?id=' + str(self.crop1.id) + ',' + str(self.crop2.id))
+        response = self.app.get('/api/v1/accessionsbyidcrop?id=' + str(self.crop1.id) + ',' + str(self.crop2.id) + "&iso=" + self.country1.iso_2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertEqual(response.json[0]['accessions'][0]['species_name'], 'Test species 1')
         self.assertEqual(response.json[0]['accessions'][0]['ext_id'], 'Test ext ID 1')
         self.assertEqual(response.json[0]['accessions'][0]['crop'], str(self.crop1.id))
-        self.assertEqual(response.json[1]['accessions'][0]['species_name'], 'Test species 4')
-        self.assertEqual(response.json[1]['accessions'][0]['ext_id'], 'Test ext ID 4')
+        self.assertEqual(response.json[1]['accessions'][0]['species_name'], 'Test species 5')
+        self.assertEqual(response.json[1]['accessions'][0]['ext_id'], 'Test ext ID 5')
         self.assertEqual(response.json[1]['accessions'][0]['crop'], str(self.crop2.id))
 
+        # Test with invalid iso 2
+        response = self.app.get('/api/v1/accessionsbyidcrop?id=' + str(self.crop1.id) + "&iso=invalid")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json['error'], "Country with iso 2 'INVALID' not found")
+        
         # Test with invalid crop id
-        response = self.app.get('/api/v1/accessionsbyidcrop?id=invalid_id')
+        response = self.app.get('/api/v1/accessionsbyidcrop?id=invalid_id' + "&iso=" + self.country1.iso_2)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json['error'], 'Invalid crop ID')
 
-        response = self.app.get('/api/v1/accessionsbyidcrop?id=640961b88e2f0a8574155555')
+        response = self.app.get('/api/v1/accessionsbyidcrop?id=640961b88e2f0a8574155555' + "&iso=" + self.country1.iso_2)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json['error'], 'Crop with id 640961b88e2f0a8574155555 not found')
 
     def test_get_accession_by_group_id(self):
         # Test with single valid group id
-        response = self.app.get('/api/v1/accessionsbyidgroup?id=' + str(self.group1.id))        
+        response = self.app.get('/api/v1/accessionsbyidgroup?id=' + str(self.group1.id) + "&iso=" + self.country1.iso_2)        
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json), 2)
-        self.assertEqual(response.json[0]['species_name'], 'Test species 1')
-        self.assertEqual(response.json[0]['ext_id'], 'Test ext ID 1')
-        self.assertEqual(response.json[0]['landrace_group'], str(self.group1.id))
-        self.assertEqual(response.json[1]['species_name'], 'Test species 2')
-        self.assertEqual(response.json[1]['ext_id'], 'Test ext ID 2')
-        self.assertEqual(response.json[1]['landrace_group'], str(self.group1.id))
+        self.assertEqual(len(response.json[0]['accessions']), 2)
+        self.assertEqual(response.json[0]['accessions'][0]['species_name'], 'Test species 1')
+        self.assertEqual(response.json[0]['accessions'][0]['ext_id'], 'Test ext ID 1')
+        self.assertEqual(response.json[0]['accessions'][0]['landrace_group'], str(self.group1.id))
+        self.assertEqual(response.json[0]['accessions'][1]['species_name'], 'Test species 2')
+        self.assertEqual(response.json[0]['accessions'][1]['ext_id'], 'Test ext ID 2')
+        self.assertEqual(response.json[0]['accessions'][1]['landrace_group'], str(self.group1.id))
 
         # Test with multiple valid group ids
-        response = self.app.get('/api/v1/accessionsbyidgroup?id=' + str(self.group1.id) + ',' + str(self.group2.id))
+        response = self.app.get('/api/v1/accessionsbyidgroup?id=' + str(self.group1.id) + ',' + str(self.group4.id) + "&iso=" + self.country1.iso_2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertEqual(response.json[0]['accessions'][0]['species_name'], 'Test species 1')
         self.assertEqual(response.json[0]['accessions'][0]['ext_id'], 'Test ext ID 1')
         self.assertEqual(response.json[0]['accessions'][0]['landrace_group'], str(self.group1.id))
-        self.assertEqual(response.json[1]['accessions'][0]['species_name'], 'Test species 3')
-        self.assertEqual(response.json[1]['accessions'][0]['ext_id'], 'Test ext ID 3')
-        self.assertEqual(response.json[1]['accessions'][0]['landrace_group'], str(self.group2.id))
+        self.assertEqual(response.json[1]['accessions'][0]['species_name'], 'Test species 5')
+        self.assertEqual(response.json[1]['accessions'][0]['ext_id'], 'Test ext ID 5')
+        self.assertEqual(response.json[1]['accessions'][0]['landrace_group'], str(self.group4.id))
+
+        # Test with invalid iso 2
+        response = self.app.get('/api/v1/accessionsbyidcrop?id=' + str(self.group1.id) + "&iso=invalid")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json['error'], "Country with iso 2 'INVALID' not found")
 
         # Test with invalid crop id
-        response = self.app.get('/api/v1/accessionsbyidgroup?id=invalid_id')
+        response = self.app.get('/api/v1/accessionsbyidgroup?id=invalid_id' + "&iso=" + self.country1.iso_2)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json['error'], 'Invalid group ID')
 
-        response = self.app.get('/api/v1/accessionsbyidgroup?id=640961b88e2f0a8574155555')
+        response = self.app.get('/api/v1/accessionsbyidgroup?id=640961b88e2f0a8574155555'  + "&iso=" + self.country2.iso_2)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json['error'], 'Group with id 640961b88e2f0a8574155555 not found')
 
