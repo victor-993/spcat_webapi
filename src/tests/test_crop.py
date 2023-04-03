@@ -85,13 +85,13 @@ class GroupsByIDCropTestCase(unittest.TestCase):
         # Test with single valid crop id
         response = self.app.get('/api/v1/groups?id=' + str(self.crop1.id))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json), 2)
-        self.assertEqual(response.json[0]['group_name'], 'Group1')
-        self.assertEqual(response.json[0]['ext_id'], '1')
-        self.assertEqual(response.json[0]['crop'], str(self.crop1.id))
-        self.assertEqual(response.json[1]['group_name'], 'Group2')
-        self.assertEqual(response.json[1]['ext_id'], '2')
-        self.assertEqual(response.json[1]['crop'], str(self.crop1.id))
+        self.assertEqual(len(response.json[0]['groups']), 2)
+        self.assertEqual(response.json[0]['groups'][0]['group_name'], 'Group1')
+        self.assertEqual(response.json[0]['groups'][0]['ext_id'], '1')
+        self.assertEqual(response.json[0]['groups'][0]['crop'], str(self.crop1.id))
+        self.assertEqual(response.json[0]['groups'][1]['group_name'], 'Group2')
+        self.assertEqual(response.json[0]['groups'][1]['ext_id'], '2')
+        self.assertEqual(response.json[0]['groups'][1]['crop'], str(self.crop1.id))
 
         # Test with multiple valid crop ids
         response = self.app.get('/api/v1/groups?id=' + str(self.crop1.id) + ',' + str(self.crop2.id))
