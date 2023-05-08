@@ -11,6 +11,7 @@ class CountriesEndpointTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         connect('test_gap_analysis', host='mongomock://localhost')
+        Country.drop_collection()
         cls.country1 = Country(name='Colombia', iso_2='CO').save()
         cls.country2 = Country(name='United States', iso_2='US').save()
         cls.country3 = Country(name='Canada', iso_2='CA').save()
