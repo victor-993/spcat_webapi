@@ -7,7 +7,7 @@ from config import config
 from flask_swagger_ui import get_swaggerui_blueprint
 
 from modules.country import Countries
-from modules.crops import Crops, Groups, GroupsByIDCrop
+from modules.crops import Crops, Groups
 from modules.accessions import AccessionsByIDCrop, AccessionsByIDGroup
 
 app = Flask(__name__)
@@ -34,7 +34,6 @@ def send_static(path):
 api.add_resource(Countries, '/api/v1/countries')
 api.add_resource(Crops, '/api/v1/crops')
 api.add_resource(Groups, '/api/v1/groups')
-api.add_resource(GroupsByIDCrop, '/api/v1/groupsbyids')
 api.add_resource(AccessionsByIDCrop, '/api/v1/accessionsbyidcrop')
 api.add_resource(AccessionsByIDGroup, '/api/v1/accessionsbyidgroup')
 

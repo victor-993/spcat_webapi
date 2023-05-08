@@ -3,18 +3,11 @@
   "info": {
     "title": "Gap Analysis Web API",
     "description": "\n![GitHub release (latest by date)](https://img.shields.io/github/v/release/CIAT-DAPA/spcat_webapi) ![](https://img.shields.io/github/v/tag/CIAT-DAPA/spcat_webapi)\n\nThis is a web API developed in Python which is responsible for collecting information from the gap database. It contains the endpoints that will be in charge of obtaining the data of countries, crops and accessions, the get crops endpoint is in charge of obtaining the information of crops and groups, the get countries endpoint is in charge of obtaining the information of countries and the get accessions endpoint is in charge of obtaining all the information of accessions.",
-    "contact": {
-      "email": "v.hernandez@cgiar.org"
-    },
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     },
     "version": "1.0.0"
-  },
-  "externalDocs": {
-    "description": "Find out more about Gap Analysis Web API",
-    "url": "https://github.com/CIAT-DAPA/spcat_webapi"
   },
   "servers": [
     {
@@ -91,40 +84,15 @@
         "tags": [
           "crop"
         ],
-        "summary": "List groups",
-        "description": "Returns a list of all groups",
+        "summary": "List groups or finds Groups by Crop Id(s)",
+        "description": "If no parameter is sent it returns a list of all groups, if one or more crop ID(s) are sent it will list the groups for those crops. Multiple crop ID(s) can be provided with comma separated strings.",
         "operationId": "getGroups",
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Group"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/groupsbyids": {
-      "get": {
-        "tags": [
-          "crop"
-        ],
-        "summary": "Finds Groups by Crop Id(s)",
-        "description": "Multiple Crop Id(s) can be provided with comma separated strings",
-        "operationId": "getGroupsbyids",
         "parameters": [
           {
             "name": "id",
             "in": "query",
             "description": "Crop IDs to filter by. e.g:64094b58b307071b4e72e908,64094b58b307071b4e72e907",
-            "required": true,
+            "required": false,
             "explode": true,
             "schema": {
               "type": "array",
@@ -136,36 +104,44 @@
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "crop_id": {
-                        "type": "string",
-                        "description": "Id accession",
-                        "example": "64094b58b307071b4e72e908"
-                      },
-                      "groups": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Group"
-                        }
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Group"
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GroupByIdCrop"
                       }
                     }
+                  ]
+                },
+                "examples": {
+                  "without id": {
+                    "$ref": "#/components/examples/ExampleGroup"
+                  },
+                  "one or more ids": {
+                    "$ref": "#/components/examples/ExampleGroupByIdCrop"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid crop ID"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Crop not found"
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -175,7 +151,7 @@
         "tags": [
           "accession"
         ],
-        "summary": "Finds Accessions by Crop Id(s)",
+        "summary": "Finds Accessions by Crop Id(s) and Iso 2 country",
         "description": "Multiple Crop Ids can be provided with comma separated strings",
         "operationId": "getAccessionsbyidcrop",
         "parameters": [
@@ -191,6 +167,16 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "name": "iso",
+            "in": "query",
+            "description": "Iso 2 country to filter by. e.g:AR",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -199,32 +185,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "crop_id": {
-                        "type": "string",
-                        "description": "Id accession",
-                        "example": "64094b58b307071b4e72e908"
-                      },
-                      "groups": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Accession"
-                        }
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AccessionByIdCrop"
                       }
                     }
-                  }
-                }
               }
             }
           },
           "400": {
-            "description": "Invalid crop ID"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Crop not found"
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -250,6 +226,16 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "name": "iso",
+            "in": "query",
+            "description": "Iso 2 country to filter by. e.g:AR",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -258,32 +244,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "crop_id": {
-                        "type": "string",
-                        "description": "Id accession",
-                        "example": "64094b58b307071b4e72e908"
-                      },
-                      "groups": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Accession"
-                        }
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AccessionByIdGroup"
                       }
                     }
-                  }
-                }
               }
             }
           },
           "400": {
-            "description": "Invalid group ID"
+            "$ref": "#/components/responses/BadRequest"
           },
           "404": {
-            "description": "Group not found"
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
           }
         }
       }
@@ -398,6 +374,11 @@
             "description": "Id group that the group belongs to.",
             "example": "64094b58b307071b4e72e92f"
           },
+          "country": {
+            "type": "string",
+            "description": "Iso 2 that the country belongs to.",
+            "example": "AR"
+          },
           "institution_name": {
             "type": "string",
             "description": "Name of the institution that holds the accession.",
@@ -441,6 +422,204 @@
         "xml": {
           "name": "accession"
         }
+      },
+      "GroupByIdCrop": {
+        "type": "object",
+        "properties": {
+          "crop_id": {
+            "type": "string",
+            "description": "Id crop",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            }
+          }
+        }
+      },
+      "AccessionByIdCrop": {
+        "type": "object",
+        "properties": {
+          "crop_id": {
+            "type": "string",
+            "description": "Id Crop",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "accessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Accession"
+            }
+          }
+        }
+      },
+      "AccessionByIdGroup": {
+        "type": "object",
+        "properties": {
+          "group_id": {
+            "type": "string",
+            "description": "Id Group",
+            "example": "64094b58b307071b4e72e908"
+          },
+          "accessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Accession"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "A description of the error that occurred."
+          }
+        }
+      }
+    },
+    "responses": {
+      "ServerError": {
+        "description": "An unexpected error occurred on the server.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "Internal server error."
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "The request was invalid or could not be understood by the server.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "An unexpected error occurred while processing the request."
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The requested resource was not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "error": "Id not found."
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "ExampleGroup": {
+        "value": [
+          {
+            "id": "64094b58b307071b4e72e92b",
+            "group_name": "g1",
+            "ext_id": "1_1",
+            "crop": "64094b58b307071b4e72e907"
+          }
+        ]
+      },
+      "ExampleGroupByIdCrop": {
+        "value": [
+          {
+            "crop_id": "64094b58b307071b4e72e908",
+            "groups": [
+              {
+                "id": "64094b58b307071b4e72e92b",
+                "group_name": "g1",
+                "ext_id": "1_1",
+                "crop": "64094b58b307071b4e72e907"
+              }
+            ]
+          }
+        ]
+      },
+      "ExampleAccession": {
+        "value": [
+          {
+            "id": "640961b88e2f0a85741ec2f6",
+            "species_name": "Musa sp.",
+            "crop": "64094b58b307071b4e72e908",
+            "landrace_group": "64094b58b307071b4e72e92f",
+            "country": "AR",
+            "institution_name": "Bioversity International Musa Germplasm Transit Centre",
+            "source_database": "genesys",
+            "latitude": -10.516667,
+            "longitude": 150.416667,
+            "accession_id": "ITC1023",
+            "ext_id": "GNS_1",
+            "other_attributes": {
+              "attribute1": "value1",
+              "attribute2": "value2"
+            }
+          }
+        ]
+      },
+      "ExampleAccessionByIdCrop": {
+        "value": [
+          {
+            "crop_id": "64094b58b307071b4e72e908",
+            "accessions": [
+              {
+                "id": "640961b88e2f0a85741ec2f6",
+                "species_name": "Musa sp.",
+                "crop": "64094b58b307071b4e72e908",
+                "country": "AR",
+                "landrace_group": "64094b58b307071b4e72e92f",
+                "institution_name": "Bioversity International Musa Germplasm Transit Centre",
+                "source_database": "genesys",
+                "latitude": -10.516667,
+                "longitude": 150.416667,
+                "accession_id": "ITC1023",
+                "ext_id": "GNS_1",
+                "other_attributes": {
+                  "attribute1": "value1",
+                  "attribute2": "value2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "ExampleAccessionByIdGroup": {
+        "value": [
+          {
+            "group_id": "64094b58b307071b4e72e92f",
+            "accessions": [
+              {
+                "id": "640961b88e2f0a85741ec2f6",
+                "species_name": "Musa sp.",
+                "crop": "64094b58b307071b4e72e908",
+                "landrace_group": "64094b58b307071b4e72e92f",
+                "country": "AR",
+                "institution_name": "Bioversity International Musa Germplasm Transit Centre",
+                "source_database": "genesys",
+                "latitude": -10.516667,
+                "longitude": 150.416667,
+                "accession_id": "ITC1023",
+                "ext_id": "GNS_1",
+                "other_attributes": {
+                  "attribute1": "value1",
+                  "attribute2": "value2"
+                }
+              }
+            ]
+          }
+        ]
       }
     }
   }
