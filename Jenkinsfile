@@ -1,4 +1,4 @@
-/* pipeline {
+pipeline {
 
     agent any
 
@@ -6,8 +6,8 @@
         stage('Ssh') {
             steps {
                 script {
-                    withCredentials(bindings: [sshUserPrivateKey(credentialsId: '', keyFileVariable: 'SSH_KEY')]) {
-                        def remote = [name: "Parks", host: "", user: "", allowAnyHosts: true, identityFile: SSH_KEY]
+                    withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'KEY_SPCAT', keyFileVariable: 'SSH_KEY')]) {
+                        def remote = [name: "Parks", host: "172.30.1.114", user: "spcat", allowAnyHosts: true, identityFile: SSH_KEY]
                         sshCommand remote: remote, sudo: false, command: "ls"
                     }
                 }
@@ -23,9 +23,9 @@
         }
     }
  
-} */
+}
 
-pipeline {
+/* pipeline {
     agent any
 
     environment {
@@ -151,4 +151,4 @@ pipeline {
             )
         }
     }
-}
+} */
