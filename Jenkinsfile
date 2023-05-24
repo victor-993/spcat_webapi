@@ -48,7 +48,7 @@ pipeline {
                         env.remote = remote
 
                         
-                        sshCommand remote: env.remote, command: '''
+                        sshCommand remote: remote, sudo: false, command: '''
                             # Inicio de sesión en el servidor AWS
                             # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
                             if [ -d api_SPCAT ]; then
