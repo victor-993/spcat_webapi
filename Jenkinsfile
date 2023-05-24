@@ -1,4 +1,4 @@
-pipeline {
+/* pipeline {
 
     agent any
 
@@ -6,8 +6,8 @@ pipeline {
         stage('Ssh') {
             steps {
                 script {
-                    withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'KEY_SPCAT', keyFileVariable: 'SSH_KEY')]) {
-                        def remote = [name: "Parks", host: "172.30.1.114", user: "spcat", allowAnyHosts: true, identityFile: SSH_KEY]
+                    withCredentials(bindings: [sshUserPrivateKey(credentialsId: '', keyFileVariable: 'SSH_KEY')]) {
+                        def remote = [name: "Parks", host: "", user: "", allowAnyHosts: true, identityFile: SSH_KEY]
                         sshCommand remote: remote, sudo: false, command: "ls"
                     }
                 }
@@ -23,9 +23,9 @@ pipeline {
         }
     }
  
-}
+} */
 
-/* pipeline {
+pipeline {
     agent any
 
     environment {
@@ -48,7 +48,7 @@ pipeline {
                         env.remote = remote
 
                         
-                        sshCommand remote: remote, sudo: false, command: '''
+                        sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
                             # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
                             if [ -d api_SPCAT ]; then
@@ -151,4 +151,4 @@ pipeline {
             )
         }
     }
-} */
+}
