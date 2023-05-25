@@ -32,22 +32,19 @@ pipeline {
         server = credentials('spcat_name')
         algo = credentials('spcat_host')
     }
-    
+
+    def remote = [:]
+    remote.user = 'fertalizer'
+    remote.name = 'Tesla'
+    remote.host = '172.30.1.117'
+
     stages {
         stage('SSH to AWS server') {
             steps {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-                        def remote = [:]
-                        remote.user = 'fertalizer'
-                        remote.name = 'Tesla'
-                        remote.host = '172.30.1.117'
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
-
-                        sh 'echo "identity: $identity"'
-                        sh 'echo "server: $server"'
-                        sh 'echo "algo: $algo"'
 
                         sshCommand remote: remote, command: "ls"
                         
