@@ -52,9 +52,8 @@ pipeline {
         stage('SSH to AWS server') {
             steps {
                 script {
-                    sshCommand remote: remote, command: "ls"
                     
-                    /* sshCommand remote: remote, command: '''
+                    sshCommand remote: remote, command: '''
                         # Inicio de sesión en el servidor AWS
                         # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
                         if [ -d api_SPCAT ]; then
@@ -64,18 +63,8 @@ pipeline {
                             cd ./api_SPCAT
                             python3 -m venv env
                         fi
-                    ''' */
+                    '''
                     
-                }
-            }
-        }
-
-        stage('segundo') {
-            steps {
-                script {
-
-                    echo "remote: ${remote}"
-                    sh 'printenv'
                 }
             }
         }
