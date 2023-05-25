@@ -30,26 +30,32 @@ pipeline {
 
     environment {
         remote = null
+        name = credentials('spcat_name')
+        host = credentials('spcat_host')
     }
     
     stages {
         stage('SSH to AWS server') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'spcat_key', keyFileVariable: 'SSH_KEY')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'spcat_key', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         def remote = [:]
-                        remote.name = credentials('spcat_name')
-                        remote.host = credentials('spcat_host')
-                        remote.user = credentials('spcat_user')
+                        remote.user = userName
+                        remote.name = name
+                        remote.host = host
                         remote.allowAnyHosts = true
-                        remote.identityFile = SSH_KEY
+                        remote.identityFile = identity
 
                         // Definir la variable remote fuera del bloque script
                         env.remote = remote
-                        echo 'name: ${remote.name}'
-                        echo 'host: ${remote.host}'
-                        echo 'user: ${remote.user}'
-                        echo 'indetityFile: ${remote.identityFile}'
+                        sh 'echo "name: $remote.name"'
+                        sh 'echo "host: $remote.host"'
+                        sh 'echo "user: $remote.user"'
+
+                        
+                        sh 'echo "name: $userName"'
+                        sh 'echo "host: $host"'
+                        sh 'echo "user: $name"'
                         
                         sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
