@@ -30,9 +30,9 @@ pipeline {
     agent any
 
     environment {
-        server_name = credentials('name_fertilizer')
-        server_host = credentials('host_fertilizer')
-        spcat_key = credentials('fertalizer_devops')
+        server_name = credentials('name_spcat')
+        server_host = credentials('host_spcat')
+        ssh_key = credentials('spcat_key')
     }
 
     stages {
@@ -41,8 +41,8 @@ pipeline {
                 script {
                     
                     remote.allowAnyHosts = true
-                    remote.identityFile = spcat_key
-                    remote.user = spcat_key_USR
+                    remote.identityFile = ssh_key
+                    remote.user = ssh_key_USR
                     remote.name = server_name
                     remote.host = server_host
                     
