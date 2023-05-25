@@ -32,33 +32,34 @@ pipeline {
     environment {
         server = credentials('name_fertilizer')
         algo = credentials('host_fertilizer')
+        SSH_CREDS = credentials('fertalizer_devops')
     }
 
     stages {
         stage('SSH to AWS server') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-                        remote.allowAnyHosts = true
-                        remote.identityFile = identity
-                        remote.user = userName
-                        remote.name = server
-                        remote.host = algo
+                    
+                    remote.allowAnyHosts = true
+                    remote.identityFile = SSH_CREDS
+                    remote.user = SSH_CREDS_USR
+                    remote.name = server
+                    remote.host = algo
 
-                        sshCommand remote: remote, command: "ls"
-                        
-                        /* sshCommand remote: remote, command: '''
-                            # Inicio de sesión en el servidor AWS
-                            # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
-                            if [ -d api_SPCAT ]; then
-                                cd ./api_SPCAT
-                            else
-                                mkdir ./api_SPCAT
-                                cd ./api_SPCAT
-                                python3 -m venv env
-                            fi
-                        ''' */
-                    }
+                    sshCommand remote: remote, command: "ls"
+                    
+                    /* sshCommand remote: remote, command: '''
+                        # Inicio de sesión en el servidor AWS
+                        # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
+                        if [ -d api_SPCAT ]; then
+                            cd ./api_SPCAT
+                        else
+                            mkdir ./api_SPCAT
+                            cd ./api_SPCAT
+                            python3 -m venv env
+                        fi
+                    ''' */
+                    
                 }
             }
         }
@@ -68,6 +69,7 @@ pipeline {
                 script {
 
                     echo "remote: ${remote}"
+                    sh 'printenv'
                 }
             }
         }
