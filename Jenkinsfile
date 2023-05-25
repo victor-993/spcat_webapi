@@ -32,7 +32,7 @@ pipeline {
     environment {
         server_name = credentials('name_spcat')
         server_host = credentials('host_spcat')
-        ssh_key = credentials('spcat_key')
+        ssh_key = credentials('KEY_SPCAT')
     }
 
     stages {
