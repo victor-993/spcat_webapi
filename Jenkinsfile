@@ -36,16 +36,32 @@ pipeline {
     }
 
     stages {
+        stage('Connection to AWS server') {
+            steps {
+                    
+                remote.allowAnyHosts = true
+                remote.identityFile = SSH_CREDS
+                remote.user = SSH_CREDS_USR
+                remote.name = server
+                remote.host = algo
+                
+                /* sshCommand remote: remote, command: '''
+                    # Inicio de sesión en el servidor AWS
+                    # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
+                    if [ -d api_SPCAT ]; then
+                        cd ./api_SPCAT
+                    else
+                        mkdir ./api_SPCAT
+                        cd ./api_SPCAT
+                        python3 -m venv env
+                    fi
+                ''' */
+                   
+            }
+        }
         stage('SSH to AWS server') {
             steps {
                 script {
-                    
-                    remote.allowAnyHosts = true
-                    remote.identityFile = SSH_CREDS
-                    remote.user = SSH_CREDS_USR
-                    remote.name = server
-                    remote.host = algo
-
                     sshCommand remote: remote, command: "ls"
                     
                     /* sshCommand remote: remote, command: '''
