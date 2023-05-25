@@ -25,7 +25,7 @@
  
 } */
 
-pipeline {
+/* pipeline {
     agent any
 
     environment {
@@ -57,7 +57,7 @@ pipeline {
 
                         sshCommand remote: remote, command: "ls"
                         
-                        /* sshCommand remote: remote, command: '''
+                        sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
                             # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
                             if [ -d api_SPCAT ]; then
@@ -67,13 +67,13 @@ pipeline {
                                 cd ./api_SPCAT
                                 python3 -m venv env
                             fi
-                        ''' */
+                        '''
                     }
                 }
             }
         }
         
-        /* stage('Stop previous API') {
+        stage('Stop previous API') {
             steps {
                 script {
                     sshCommand remote: env.remote, command: '''
@@ -139,7 +139,7 @@ pipeline {
                     '''
                 }
             }
-        } */
+        }
     }
 
     post {
@@ -158,6 +158,22 @@ pipeline {
                 recipientProviders: [developers()],
                 replyTo: "vhernandez@cgiar.org"
             )
+        }
+    }
+} */
+
+
+def remote = [:]
+remote.name = "Tesla"
+remote.host = "172.30.1.117"
+remote.allowAnyHosts = true
+
+node {
+    withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+        remote.user = userName
+        remote.identityFile = identity
+        stage("SSH Steps Rocks!") {
+            sshCommand remote: remote, command: "ls"
         }
     }
 }
