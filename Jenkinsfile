@@ -38,11 +38,11 @@ pipeline {
         stage('SSH to AWS server') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'spcat_key', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         def remote = [:]
-                        remote.user = 'spcat'
-                        remote.name = 'Parks'
-                        remote.host = '172.30.1.114'
+                        remote.user = 'fertalizer'
+                        remote.name = 'Tesla'
+                        remote.host = '172.30.1.117'
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
 
