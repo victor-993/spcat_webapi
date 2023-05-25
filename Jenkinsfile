@@ -26,9 +26,6 @@
 } */
 
 def remote = [:]
-remote.user = 'fertalizer'
-remote.name = 'Tesla'
-remote.host = '172.30.1.117'
 pipeline {
     agent any
 
@@ -44,7 +41,9 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
+                        remote.user = userName
                         remote.name = server
+                        remote.host = algo
 
                         sshCommand remote: remote, command: "ls"
                         
@@ -68,9 +67,7 @@ pipeline {
             steps {
                 script {
 
-                    sh 'echo "remote: ${remote}"'
-
-                    sshCommand remote: remote, command: "ls"
+                    echo "remote: ${remote}"
                 }
             }
         }
