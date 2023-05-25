@@ -118,6 +118,7 @@ pipeline {
                         source env/bin/activate
                         
                         # Updating the dependencies
+                        pip install --upgrade setuptools wheel
                         pip install -r api_actual/requirements.txt
                     '''
                 }
