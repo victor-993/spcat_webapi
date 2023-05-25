@@ -88,7 +88,9 @@ pipeline {
                     sshCommand remote: remote, command: '''
                         # Guardar archivos antiguos de la API
                         rm -rf api_antiguo
-                        mv api_actual api_antiguo
+                        if [ -d api_actual ]; then
+                            mv api_actual api_antiguo
+                        fi
                     '''
                 }
             }
