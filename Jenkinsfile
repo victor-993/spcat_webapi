@@ -69,7 +69,7 @@ pipeline {
             }
         }
         
-        /* stage('Stop previous API') {
+        stage('Stop previous API') {
             steps {
                 script {
                     sshCommand remote: env.remote, command: '''
@@ -108,7 +108,7 @@ pipeline {
             }
         }
         
-        stage('Update dependencies') {
+        /* stage('Update dependencies') {
             steps {
                 script {
                     sshCommand remote: env.remote, command: '''
