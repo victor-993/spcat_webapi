@@ -151,6 +151,7 @@ pipeline {
                 recipientProviders: [developers()],
                 replyTo: "vhernandez@cgiar.org"
             )
+            sh 'echo "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles."'
         }
     }
 }
