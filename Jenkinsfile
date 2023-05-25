@@ -40,24 +40,25 @@ pipeline {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'spcat_key', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         def remote = [:]
-                        remote.user = userName
-                        remote.name = name
-                        remote.host = host
+                        remote.user = 'spcat'
+                        remote.name = 'Parks'
+                        remote.host = '172.30.1.114'
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
 
                         // Definir la variable remote fuera del bloque script
+                        sh 'echo "remote: $remote"'
                         env.remote = remote
-                        sh 'echo "name: $remote.name"'
-                        sh 'echo "host: $remote.host"'
-                        sh 'echo "user: $remote.user"'
 
                         
                         sh 'echo "name: $userName"'
                         sh 'echo "host: $host"'
                         sh 'echo "user: $name"'
+                        sh 'echo "remote: $remote"'
+
+                        sshCommand remote: remote, command: "ls"
                         
-                        sshCommand remote: remote, command: '''
+                        /* sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
                             # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
                             if [ -d api_SPCAT ]; then
@@ -67,13 +68,13 @@ pipeline {
                                 cd ./api_SPCAT
                                 python3 -m venv env
                             fi
-                        '''
+                        ''' */
                     }
                 }
             }
         }
         
-        stage('Stop previous API') {
+        /* stage('Stop previous API') {
             steps {
                 script {
                     sshCommand remote: env.remote, command: '''
@@ -139,7 +140,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        } */
     }
 
     post {
