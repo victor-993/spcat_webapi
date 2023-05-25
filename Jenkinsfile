@@ -27,28 +27,22 @@
 
 pipeline {
     agent any
-
-    environment {
-        remote = null
-        name = credentials('spcat_name')
-        host = credentials('spcat_host')
-    }
     
     stages {
         stage('SSH to AWS server') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'spcat_key', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         def remote = [:]
-                        remote.user = 'spcat'
-                        remote.name = 'Parks'
+                        remote.user = 'fertalizer'
+                        remote.name = 'Tesla'
                         remote.host = '172.30.1.114'
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
 
-                        // Definir la variable remote fuera del bloque script
+                        sh 'echo "identity: $identity"'
 
-                        sshCommand remote: remote, sudo: false, command: "ls"
+                        sshCommand remote: remote, command: "ls"
                         
                         /* sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
@@ -140,7 +134,7 @@ pipeline {
             emailext(
                 subject: "Successful deployment of the SPCAT API",
                 body: "The SPCAT api pipeline has been executed correctly.",
-                recipientProviders: [developers()],
+                recipientProviders: ["vhernandez@cgiar.org"],
                 replyTo: "vhernandez@cgiar.org"
             )
         }
@@ -148,7 +142,7 @@ pipeline {
             emailext(
                 subject: "Failure to deploy the SPCAT API",
                 body: "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles.",
-                recipientProviders: [developers()],
+                recipientProviders: ["vhernandez@cgiar.org"],
                 replyTo: "vhernandez@cgiar.org"
             )
             sh 'echo "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles."'
