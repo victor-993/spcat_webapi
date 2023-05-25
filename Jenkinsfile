@@ -47,16 +47,8 @@ pipeline {
                         remote.identityFile = identity
 
                         // Definir la variable remote fuera del bloque script
-                        sh 'echo "remote: $remote"'
-                        env.remote = remote
 
-                        
-                        sh 'echo "name: $userName"'
-                        sh 'echo "host: $host"'
-                        sh 'echo "user: $name"'
-                        sh 'echo "remote: $remote"'
-
-                        sshCommand remote: remote, command: "ls"
+                        sshCommand remote: remote, sudo: false, command: "ls"
                         
                         /* sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
