@@ -25,10 +25,11 @@
  
 } */
 
-/* pipeline {
+pipeline {
     agent any
 
     environment {
+        remote = null
         name = credentials('spcat_name')
         host = credentials('spcat_host')
     }
@@ -37,9 +38,9 @@
         stage('SSH to AWS server') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'KEY_SPCAT', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         def remote = [:]
-                        remote.user = userName
+                        remote.user = 'fertalizer'
                         remote.name = 'Tesla'
                         remote.host = '172.30.1.117'
                         remote.allowAnyHosts = true
@@ -57,7 +58,7 @@
 
                         sshCommand remote: remote, command: "ls"
                         
-                        sshCommand remote: remote, command: '''
+                        /* sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
                             # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
                             if [ -d api_SPCAT ]; then
@@ -67,13 +68,13 @@
                                 cd ./api_SPCAT
                                 python3 -m venv env
                             fi
-                        '''
+                        ''' */
                     }
                 }
             }
         }
         
-        stage('Stop previous API') {
+        /* stage('Stop previous API') {
             steps {
                 script {
                     sshCommand remote: env.remote, command: '''
@@ -139,7 +140,7 @@
                     '''
                 }
             }
-        }
+        } */
     }
 
     post {
@@ -158,21 +159,6 @@
                 recipientProviders: [developers()],
                 replyTo: "vhernandez@cgiar.org"
             )
-        }
-    }
-} */
-
-
-node {
-    withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-        def remote = [:]
-        remote.name = "Tesla"
-        remote.host = "172.30.1.117"
-        remote.allowAnyHosts = true
-        remote.user = 'fertilizer'
-        remote.identityFile = identity
-        stage("SSH Steps Rocks!") {
-            sshCommand remote: remote, command: "ls"
         }
     }
 }
