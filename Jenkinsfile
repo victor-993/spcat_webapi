@@ -49,16 +49,13 @@ pipeline {
                 }
             }
         }
-        stage('SSH to AWS server') {
+        stage('Verify Api folder and environment') {
             steps {
                 script {
                     
                     sshCommand remote: remote, command: '''
-                        # Inicio de sesión en el servidor AWS
-                        # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
-                        if [ -d api_SPCAT ]; then
-                            cd ./api_SPCAT
-                        else
+                        # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
+                        if [ !-d api_SPCAT ]; then
                             mkdir ./api_SPCAT
                             cd ./api_SPCAT
                             python3 -m venv env
@@ -73,7 +70,7 @@ pipeline {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
-                        # Detener la API si está en ejecución
+                        # Stop the API if it is running
                         if [ -n "$PID_API_SPCAT" ]; then
                             kill "$PID_API_SPCAT"
                         fi
@@ -86,7 +83,8 @@ pipeline {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
-                        # Guardar archivos antiguos de la API
+                        # Saving old API files
+                        cd ./api_SPCAT
                         rm -rf api_antiguo
                         if [ -d api_actual ]; then
                             mv api_actual api_antiguo
@@ -100,7 +98,8 @@ pipeline {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
-                        # Descargar el último release desde GitHub
+                        # Download the latest release from GitHub
+                        cd ./api_SPCAT
                         rm -rf releaseApi.zip
                         curl -LOk https://github.com/victor-993/spcat_webapi/releases/latest/download/releaseApi.zip
                         rm -rf api_actual
@@ -110,21 +109,22 @@ pipeline {
             }
         }
         
-        /* stage('Update dependencies') {
+        stage('Update dependencies') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
-                        # Acceder al entorno virtual
+                    sshCommand remote: env.remote, command: '''                        
+                        cd ./api_SPCAT
+                        # Activate the virtual environment
                         source env/bin/activate
                         
-                        # Actualizar las dependencias
+                        # Updating the dependencies
                         pip install -r api_actual/requirements.txt
                     '''
                 }
             }
         }
         
-        stage('Start API') {
+        /* stage('Start API') {
             steps {
                 script {
                     sshCommand remote: env.remote, command: '''
