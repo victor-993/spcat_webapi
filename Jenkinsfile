@@ -163,13 +163,12 @@
 } */
 
 
-def remote = [:]
-remote.name = "Tesla"
-remote.host = "172.30.1.117"
-remote.allowAnyHosts = true
-
 node {
     withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+        def remote = [:]
+        remote.name = "Tesla"
+        remote.host = "172.30.1.117"
+        remote.allowAnyHosts = true
         remote.user = 'fertilizer'
         remote.identityFile = identity
         stage("SSH Steps Rocks!") {
