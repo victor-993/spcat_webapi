@@ -170,7 +170,7 @@ remote.allowAnyHosts = true
 
 node {
     withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-        remote.user = userName
+        remote.user = 'fertilizer'
         remote.identityFile = identity
         stage("SSH Steps Rocks!") {
             sshCommand remote: remote, command: "ls"
