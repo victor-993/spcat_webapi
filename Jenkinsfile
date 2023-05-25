@@ -55,7 +55,7 @@ pipeline {
                     
                     sshCommand remote: remote, command: '''
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
-                        if [ !-d api_SPCAT ]; then
+                        if [ ! -d api_SPCAT ]; then
                             mkdir ./api_SPCAT
                             cd ./api_SPCAT
                             python3 -m venv env
