@@ -29,8 +29,8 @@ pipeline {
     agent any
 
     environment {
-        name = credentials('name_fertilizer')
-        host = credentials('host_fertilizer')
+        name = credentials('spcat_name')
+        host = credentials('spcat_host')
     }
     
     stages {
@@ -40,12 +40,15 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'KEY_SPCAT', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         def remote = [:]
                         remote.user = userName
-                        remote.name = name
-                        remote.host = host
+                        remote.name = 'Tesla'
+                        remote.host = '172.30.1.117'
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
 
                         // Definir la variable remote fuera del bloque script
+                        sh 'echo "remote: $remote"'
+                        env.remote = remote
+
                         
                         sh 'echo "name: $userName"'
                         sh 'echo "host: $host"'
