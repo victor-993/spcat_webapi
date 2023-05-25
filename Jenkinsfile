@@ -25,6 +25,10 @@
  
 } */
 
+def remote = [:]
+remote.user = 'fertalizer'
+remote.name = 'Tesla'
+remote.host = '172.30.1.117'
 pipeline {
     agent any
 
@@ -34,10 +38,6 @@ pipeline {
     }
 
     stages {
-        def remote = [:]
-        remote.user = 'fertalizer'
-        remote.name = 'Tesla'
-        remote.host = '172.30.1.117'
         stage('SSH to AWS server') {
             steps {
                 script {
