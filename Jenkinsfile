@@ -33,8 +33,8 @@ pipeline {
     agent any
 
     environment {
-        server = credentials('spcat_name')
-        algo = credentials('spcat_host')
+        server = credentials('name_fertilizer')
+        algo = credentials('host_fertilizer')
     }
 
     stages {
@@ -44,6 +44,7 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'fertalizer_devops', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
                         remote.allowAnyHosts = true
                         remote.identityFile = identity
+                        remote.name = server
 
                         sshCommand remote: remote, command: "ls"
                         
@@ -66,6 +67,9 @@ pipeline {
         stage('segundo') {
             steps {
                 script {
+
+                    sh 'echo "remote: ${remote}"'
+
                     sshCommand remote: remote, command: "ls"
                 }
             }
