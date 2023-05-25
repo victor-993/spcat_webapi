@@ -48,9 +48,14 @@ pipeline {
 
                         // Definir la variable remote fuera del bloque script
                         env.remote = remote
-                        sh 'echo "name: ${remote.name}"'
-                        sh 'echo "host: ${remote.host}"'
-                        sh 'echo "user: ${remote.user}"'
+                        sh 'echo "name: $remote.name"'
+                        sh 'echo "host: $remote.host"'
+                        sh 'echo "user: $remote.user"'
+
+                        
+                        sh 'echo "name: $userName"'
+                        sh 'echo "host: $host"'
+                        sh 'echo "user: $name"'
                         
                         sshCommand remote: remote, command: '''
                             # Inicio de sesión en el servidor AWS
