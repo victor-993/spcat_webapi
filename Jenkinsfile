@@ -27,6 +27,11 @@
 
 pipeline {
     agent any
+
+    environment {
+        server = credentials('spcat_name')
+        algo = credentials('spcat_host')
+    }
     
     stages {
         stage('SSH to AWS server') {
@@ -41,6 +46,8 @@ pipeline {
                         remote.identityFile = identity
 
                         sh 'echo "identity: $identity"'
+                        sh 'echo "server: $server"'
+                        sh 'echo "algo: $algo"'
 
                         sshCommand remote: remote, command: "ls"
                         
@@ -127,25 +134,5 @@ pipeline {
                 }
             }
         } */
-    }
-
-    post {
-        success {
-            emailext(
-                subject: "Successful deployment of the SPCAT API",
-                body: "The SPCAT api pipeline has been executed correctly.",
-                recipientProviders: ["vhernandez@cgiar.org"],
-                replyTo: "vhernandez@cgiar.org"
-            )
-        }
-        failure {
-            emailext(
-                subject: "Failure to deploy the SPCAT API",
-                body: "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles.",
-                recipientProviders: ["vhernandez@cgiar.org"],
-                replyTo: "vhernandez@cgiar.org"
-            )
-            sh 'echo "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles."'
-        }
     }
 }
