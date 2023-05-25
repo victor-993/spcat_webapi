@@ -62,6 +62,14 @@ pipeline {
                 }
             }
         }
+
+        stage('segundo') {
+            steps {
+                script {
+                    sshCommand remote: remote, command: "ls"
+                }
+            }
+        }
         
         /* stage('Stop previous API') {
             steps {
