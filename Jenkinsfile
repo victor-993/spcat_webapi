@@ -72,7 +72,7 @@ pipeline {
         stage('Stop previous API') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
+                    sshCommand remote: remote, command: '''
                         # Detener la API si está en ejecución
                         if [ -n "$PID_API_SPCAT" ]; then
                             kill "$PID_API_SPCAT"
@@ -85,7 +85,7 @@ pipeline {
         stage('Backup previous files') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
+                    sshCommand remote: remote, command: '''
                         # Guardar archivos antiguos de la API
                         rm -rf api_antiguo
                         mv api_actual api_antiguo
@@ -97,7 +97,7 @@ pipeline {
         stage('Download latest release') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
+                    sshCommand remote: remote, command: '''
                         # Descargar el último release desde GitHub
                         rm -rf releaseApi.zip
                         curl -LOk https://github.com/victor-993/spcat_webapi/releases/latest/download/releaseApi.zip
