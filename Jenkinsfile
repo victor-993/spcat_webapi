@@ -112,7 +112,7 @@ pipeline {
         stage('Update dependencies') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''                        
+                    sshCommand remote: remote, command: '''                        
                         cd ./api_SPCAT
                         # Activate the virtual environment
                         source env/bin/activate
@@ -127,7 +127,7 @@ pipeline {
         /* stage('Start API') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
+                    sshCommand remote: remote, command: '''
                         # Iniciar la API
                         nohup python3 api_actual/api.py > log.txt 2>&1 &
                         
