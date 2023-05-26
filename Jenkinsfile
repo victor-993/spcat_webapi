@@ -111,6 +111,14 @@ pipeline {
 
                         cd ./api_actual
 
+                        # Necessary variables
+
+                        export DEBUG=false
+                        export API_SPCAT_PORT=5001
+                        export CONNECTION_DB=mongodb://root:s3cr3t@localhost:27017/dbgap?authSource=admin
+
+                        env
+
                         # Start API
                         # nohup gunicorn api:app > api_spcat.log 2>&1 &
                         python3 api.py
