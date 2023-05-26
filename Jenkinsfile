@@ -105,6 +105,7 @@ pipeline {
         stage('Start API') {
             steps {
                 script {
+                    def port = port_api
                     sshCommand remote: remote, command: '''
                         cd ./api_SPCAT
                         # Activate the virtual environment
@@ -115,7 +116,7 @@ pipeline {
                         # Necessary variables
 
                         export DEBUG=false
-                        export API_SPCAT_PORT=$port_api
+                        export API_SPCAT_PORT=${port}
                         export CONNECTION_DB=mongodb://root:s3cr3t@localhost:27017/dbgap?authSource=admin
 
                         env
