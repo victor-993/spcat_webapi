@@ -8,6 +8,7 @@ pipeline {
         server_name = credentials('name_spcat')
         server_host = credentials('host_spcat')
         ssh_key = credentials('spcat_key')
+        port_api = credentials('api_spcat_port')
     }
 
     stages {
@@ -114,14 +115,13 @@ pipeline {
                         # Necessary variables
 
                         export DEBUG=false
-                        export API_SPCAT_PORT=5001
+                        export API_SPCAT_PORT=${port_api}
                         export CONNECTION_DB=mongodb://root:s3cr3t@localhost:27017/dbgap?authSource=admin
 
                         env
 
                         # Start API
                         # nohup gunicorn api:app > api_spcat.log 2>&1 &
-                        python3 api.py
                         
                         # Get the new PID and save it to a file
                         PID_API_SPCAT=$!
