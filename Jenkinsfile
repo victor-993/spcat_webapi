@@ -1,31 +1,6 @@
-/* pipeline {
-
-    agent any
-
-    stages {
-        stage('Ssh') {
-            steps {
-                script {
-                    withCredentials(bindings: [sshUserPrivateKey(credentialsId: '', keyFileVariable: 'SSH_KEY')]) {
-                        def remote = [name: "Parks", host: "", user: "", allowAnyHosts: true, identityFile: SSH_KEY]
-                        sshCommand remote: remote, sudo: false, command: "ls"
-                    }
-                }
-            }
-        }
-        stage('Get release') {
-            steps {
-                sh """ls"""
-                //sh """ls"""
-                //sh """rm -fr src"""
-                //sh """rm -fr releaseApi.zip"""
-            }
-        }
-    }
- 
-} */
-
+// Define an empty map for storing remote SSH connection parameters
 def remote = [:]
+
 pipeline {
     agent any
 
@@ -39,7 +14,7 @@ pipeline {
         stage('Connection to AWS server') {
             steps {
                 script {
-                    
+                    // Set up remote SSH connection parameters
                     remote.allowAnyHosts = true
                     remote.identityFile = ssh_key
                     remote.user = ssh_key_USR
@@ -71,7 +46,8 @@ pipeline {
                 script {
                     sshCommand remote: remote, command: '''
                         # Stop the API if it is running
-                        if [ -n "$PID_API_SPCAT" ]; then
+                        if [ -f pid.txt ]; then
+                            PID_API_SPCAT=$(cat pid.txt)
                             kill "$PID_API_SPCAT"
                         fi
                     '''
@@ -112,7 +88,7 @@ pipeline {
         stage('Update dependencies') {
             steps {
                 script {
-                    sshCommand remote: remote, command: '''                        
+                    sshCommand remote: remote, command: '''
                         cd ./api_SPCAT
                         # Activate the virtual environment
                         source env/bin/activate
@@ -125,19 +101,46 @@ pipeline {
             }
         }
         
-        /* stage('Start API') {
+        stage('Start API') {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
-                        # Iniciar la API
-                        nohup python3 api_actual/api.py > log.txt 2>&1 &
+                        cd ./api_SPCAT
+                        # Activate the virtual environment
+                        source env/bin/activate
+
+                        cd ./api_actual
+
+                        # Start API
+                        # nohup gunicorn api:app > api_spcat.log 2>&1 &
+                        python3 api.py
                         
-                        # Obtener el nuevo PID y guardarlo en un archivo
+                        # Get the new PID and save it to a file
                         PID_API_SPCAT=$!
-                        echo $PID_API_SPCAT > pid.txt
+                        echo $PID_API_SPCAT > ../pid.txt
                     '''
                 }
             }
-        } */
+        }
     }
+
+    /* post {
+        failure {
+            script {
+                sshCommand remote: remote, command: '''
+                    # Rollback to the previous API if any step fails
+                    cd ./api_SPCAT
+                    rm -rf api_actual
+                    mv api_antiguo api_actual
+
+                    cd ./api_actual
+                    source env/bin/activate
+
+                    nohup gunicorn api:app > api_spcat.log 2>&1 &
+                    PID_API_SPCAT=$!
+                    echo $PID_API_SPCAT > ../pid.txt
+                '''
+            }
+        }
+    } */
 }
