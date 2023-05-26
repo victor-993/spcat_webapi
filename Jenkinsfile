@@ -115,7 +115,7 @@ pipeline {
                         # Necessary variables
 
                         export DEBUG=false
-                        export API_SPCAT_PORT=${port_api}
+                        export API_SPCAT_PORT=$port_api
                         export CONNECTION_DB=mongodb://root:s3cr3t@localhost:27017/dbgap?authSource=admin
 
                         env
