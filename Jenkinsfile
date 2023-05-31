@@ -49,10 +49,13 @@ pipeline {
                         # Stop the API if it is running
                         
                         cd ./api_SPCAT
-                        
+
                         if [ -f pid.txt ]; then
                             PID_API_SPCAT=$(cat pid.txt)
-                            kill "$PID_API_SPCAT"
+                            if kill -0 "$PID_API_SPCAT" 2>/dev/null; then
+                                echo "The process exists, stopping it..."
+                                kill "$PID_API_SPCAT"
+                            fi
                         fi
                     '''
                 }
@@ -116,10 +119,16 @@ pipeline {
 
                         cd ./api_actual
 
-                        # Necessary variables
+                        env
+
+                        export DEBUG=false
+                        export API_SPCAT_PORT=5000
+                        export CONNECTION_DB=mongodb://AdminSpcat:Spc4t-AdmindB6@localhost:27017/spcat_db?authSource=admin
+
+                        env
 
                         # Start API
-                        nohup gunicorn api:app > api_spcat.log 2>&1 &
+                        nohup python3 api.py > api_spcat.log 2>&1 &
                         
                         # Get the new PID and save it to a file
                         PID_API_SPCAT=$!
