@@ -41,8 +41,5 @@ api.add_resource(AccessionsByIDGroup, '/api/v1/accessionsbyidgroup')
 if __name__ == '__main__':
     connect(host=config['CONNECTION_DB'])
     print("Connected DB")
-    
-    if config['DEBUG']:
-        app.run(threaded=True, port=config['PORT'], debug=config['DEBUG'])
-    else:
-        app.run(host=config['HOST'], port=config['PORT'], debug=config['DEBUG'], workers=4)
+
+    app.run(threaded=True, host=config['HOST'], port=config['PORT'], debug=config['DEBUG'])
