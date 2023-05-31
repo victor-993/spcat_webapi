@@ -49,7 +49,7 @@ pipeline {
                         # Stop the API if it is running
                         
                         cd ./api_SPCAT
-                        
+
                         if [ -f pid.txt ]; then
                             PID_API_SPCAT=$(cat pid.txt)
                             kill "$PID_API_SPCAT"
@@ -116,8 +116,8 @@ pipeline {
 
                         cd ./api_actual
 
-                        # Necessary variables
 
+                        env
                         # Start API
                         nohup gunicorn api:app > api_spcat.log 2>&1 &
                         
