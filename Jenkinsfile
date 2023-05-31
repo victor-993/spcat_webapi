@@ -1,77 +1,57 @@
-/* pipeline {
-
-    agent any
-
-    stages {
-        stage('Ssh') {
-            steps {
-                script {
-                    withCredentials(bindings: [sshUserPrivateKey(credentialsId: '', keyFileVariable: 'SSH_KEY')]) {
-                        def remote = [name: "Parks", host: "", user: "", allowAnyHosts: true, identityFile: SSH_KEY]
-                        sshCommand remote: remote, sudo: false, command: "ls"
-                    }
-                }
-            }
-        }
-        stage('Get release') {
-            steps {
-                sh """ls"""
-                //sh """ls"""
-                //sh """rm -fr src"""
-                //sh """rm -fr releaseApi.zip"""
-            }
-        }
-    }
- 
-} */
+// Define an empty map for storing remote SSH connection parameters
+def remote = [:]
 
 pipeline {
     agent any
 
     environment {
-        remote = null
-        name = credentials('spcat_name')
-        host = credentials('spcat_host')
+        server_name = credentials('name_spcat')
+        server_host = credentials('host_spcat')
+        ssh_key = credentials('spcat_key')
+        port_api = credentials('api_spcat_port')
     }
-    
+
     stages {
-        stage('SSH to AWS server') {
+        stage('Connection to AWS server') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'spcat_key', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-                        def remote = [:]
-                        remote.user = 'spcat'
-                        remote.name = 'Parks'
-                        remote.host = '172.30.1.114'
-                        remote.allowAnyHosts = true
-                        remote.identityFile = identity
-
-                        // Definir la variable remote fuera del bloque script
-
-                        sshCommand remote: remote, sudo: false, command: "ls"
-                        
-                        /* sshCommand remote: remote, command: '''
-                            # Inicio de sesión en el servidor AWS
-                            # Verificar y crear la carpeta api_SPCAT si no existe y el entorno virtual
-                            if [ -d api_SPCAT ]; then
-                                cd ./api_SPCAT
-                            else
-                                mkdir ./api_SPCAT
-                                cd ./api_SPCAT
-                                python3 -m venv env
-                            fi
-                        ''' */
-                    }
+                    // Set up remote SSH connection parameters
+                    remote.allowAnyHosts = true
+                    remote.identityFile = ssh_key
+                    remote.user = ssh_key_USR
+                    remote.name = server_name
+                    remote.host = server_host
+                    
+                }
+            }
+        }
+        stage('Verify Api folder and environment') {
+            steps {
+                script {
+                    
+                    sshCommand remote: remote, command: '''
+                        # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
+                        if [ ! -d api_SPCAT ]; then
+                            mkdir ./api_SPCAT
+                            cd ./api_SPCAT
+                            python3 -m venv env
+                        fi
+                    '''
+                    
                 }
             }
         }
         
-        /* stage('Stop previous API') {
+        stage('Stop previous API') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
-                        # Detener la API si está en ejecución
-                        if [ -n "$PID_API_SPCAT" ]; then
+                    sshCommand remote: remote, command: '''
+                        # Stop the API if it is running
+                        
+                        cd ./api_SPCAT
+                        
+                        if [ -f pid.txt ]; then
+                            PID_API_SPCAT=$(cat pid.txt)
                             kill "$PID_API_SPCAT"
                         fi
                     '''
@@ -82,10 +62,13 @@ pipeline {
         stage('Backup previous files') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
-                        # Guardar archivos antiguos de la API
+                    sshCommand remote: remote, command: '''
+                        # Saving old API files
+                        cd ./api_SPCAT
                         rm -rf api_antiguo
-                        mv api_actual api_antiguo
+                        if [ -d api_actual ]; then
+                            mv api_actual api_antiguo
+                        fi
                     '''
                 }
             }
@@ -94,8 +77,9 @@ pipeline {
         stage('Download latest release') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
-                        # Descargar el último release desde GitHub
+                    sshCommand remote: remote, command: '''
+                        # Download the latest release from GitHub
+                        cd ./api_SPCAT
                         rm -rf releaseApi.zip
                         curl -LOk https://github.com/victor-993/spcat_webapi/releases/latest/download/releaseApi.zip
                         rm -rf api_actual
@@ -108,11 +92,13 @@ pipeline {
         stage('Update dependencies') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
-                        # Acceder al entorno virtual
+                    sshCommand remote: remote, command: '''
+                        cd ./api_SPCAT
+                        # Activate the virtual environment
                         source env/bin/activate
                         
-                        # Actualizar las dependencias
+                        # Updating the dependencies
+                        pip install --upgrade setuptools wheel
                         pip install -r api_actual/requirements.txt
                     '''
                 }
@@ -122,36 +108,45 @@ pipeline {
         stage('Start API') {
             steps {
                 script {
-                    sshCommand remote: env.remote, command: '''
-                        # Iniciar la API
-                        nohup python3 api_actual/api.py > log.txt 2>&1 &
+                    def port = port_api
+                    sshCommand remote: remote, command: '''
+                        cd ./api_SPCAT
+                        # Activate the virtual environment
+                        source env/bin/activate
+
+                        cd ./api_actual
+
+                        # Necessary variables
+
+                        # Start API
+                        nohup gunicorn api:app > api_spcat.log 2>&1 &
                         
-                        # Obtener el nuevo PID y guardarlo en un archivo
+                        # Get the new PID and save it to a file
                         PID_API_SPCAT=$!
-                        echo $PID_API_SPCAT > pid.txt
+                        echo $PID_API_SPCAT > ../pid.txt
                     '''
                 }
             }
-        } */
+        }
     }
 
-    post {
-        success {
-            emailext(
-                subject: "Successful deployment of the SPCAT API",
-                body: "The SPCAT api pipeline has been executed correctly.",
-                recipientProviders: [developers()],
-                replyTo: "vhernandez@cgiar.org"
-            )
-        }
+    /* post {
         failure {
-            emailext(
-                subject: "Failure to deploy the SPCAT API",
-                body: "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles.",
-                recipientProviders: [developers()],
-                replyTo: "vhernandez@cgiar.org"
-            )
-            sh 'echo "The SPCAT api pipeline has failed at step ${currentBuild.currentResult.displayName}. Por favor, revisa los registros de Jenkins para obtener más detalles."'
+            script {
+                sshCommand remote: remote, command: '''
+                    # Rollback to the previous API if any step fails
+                    cd ./api_SPCAT
+                    rm -rf api_actual
+                    mv api_antiguo api_actual
+
+                    cd ./api_actual
+                    source env/bin/activate
+
+                    nohup gunicorn api:app > api_spcat.log 2>&1 &
+                    PID_API_SPCAT=$!
+                    echo $PID_API_SPCAT > ../pid.txt
+                '''
+            }
         }
-    }
+    } */
 }

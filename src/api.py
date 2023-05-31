@@ -1,4 +1,3 @@
-
 from flask import Flask, redirect, send_from_directory
 from flask_restful import Api
 from flask_cors import CORS
@@ -46,5 +45,4 @@ if __name__ == '__main__':
     if config['DEBUG']:
         app.run(threaded=True, port=config['PORT'], debug=config['DEBUG'])
     else:
-        app.run(host=config['HOST'], port=config['PORT'],
-                debug=config['DEBUG'])
+        app.run(host=config['HOST'], port=config['PORT'], debug=config['DEBUG'], workers=4)
