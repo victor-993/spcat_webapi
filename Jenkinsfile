@@ -52,7 +52,10 @@ pipeline {
 
                         if [ -f pid.txt ]; then
                             PID_API_SPCAT=$(cat pid.txt)
-                            kill "$PID_API_SPCAT"
+                            if kill -0 "$PID_API_SPCAT" 2>/dev/null; then
+                                echo "The process exists, stopping it..."
+                                kill "$PID_API_SPCAT"
+                            fi
                         fi
                     '''
                 }
