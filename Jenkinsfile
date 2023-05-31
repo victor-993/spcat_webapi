@@ -47,6 +47,9 @@ pipeline {
                 script {
                     sshCommand remote: remote, command: '''
                         # Stop the API if it is running
+                        
+                        cd ./api_SPCAT
+                        
                         if [ -f pid.txt ]; then
                             PID_API_SPCAT=$(cat pid.txt)
                             kill "$PID_API_SPCAT"
@@ -115,14 +118,8 @@ pipeline {
 
                         # Necessary variables
 
-                        export DEBUG=false
-                        export API_SPCAT_PORT=${port}
-                        export CONNECTION_DB=mongodb://root:s3cr3t@localhost:27017/dbgap?authSource=admin
-
-                        env
-
                         # Start API
-                        # nohup gunicorn api:app > api_spcat.log 2>&1 &
+                        nohup gunicorn api:app > api_spcat.log 2>&1 &
                         
                         # Get the new PID and save it to a file
                         PID_API_SPCAT=$!
