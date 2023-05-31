@@ -9,6 +9,7 @@ pipeline {
         server_host = credentials('host_spcat')
         ssh_key = credentials('spcat_key')
         port_api = credentials('api_spcat_port')
+        conectino_db = credentials('connection_db_spcat')
     }
 
     stages {
@@ -25,7 +26,22 @@ pipeline {
                 }
             }
         }
+
         stage('Verify Api folder and environment') {
+            steps {
+                script {
+                    
+                    sshCommand remote: remote, command: '''
+                        # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
+                        echo ${conectino_db}
+                        echo ${env.conectino_db}
+                    '''
+                    
+                }
+            }
+        }
+
+        /* stage('Verify Api folder and environment') {
             steps {
                 script {
                     
@@ -136,7 +152,7 @@ pipeline {
                     '''
                 }
             }
-        }
+        } */
     }
 
     /* post {
