@@ -125,7 +125,7 @@ pipeline {
                         env
 
                         # Start API
-                        nohup gunicorn api:app > api_spcat.log 2>&1 &
+                        nohup python3 api.py > api_spcat.log 2>&1 &
                         
                         # Get the new PID and save it to a file
                         PID_API_SPCAT=$!
