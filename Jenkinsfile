@@ -116,8 +116,14 @@ pipeline {
 
                         cd ./api_actual
 
+                        env
+
+                        export DEBUG=false
+                        export API_SPCAT_PORT=5000
+                        export CONNECTION_DB=mongodb://AdminSpcat:Spc4t-AdmindB6@localhost:27017/spcat_db?authSource=admin
 
                         env
+
                         # Start API
                         nohup gunicorn api:app > api_spcat.log 2>&1 &
                         
