@@ -35,8 +35,8 @@ pipeline {
                     
                     sshCommand remote: remote, command: '''
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
-                        echo ${conectino_db}
-                        echo ${env.conectino_db}
+                        echo "${conectino_db}"
+                        echo "$conectino_db"
                     '''
                     
                 }
