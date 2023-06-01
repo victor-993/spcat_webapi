@@ -37,8 +37,9 @@ pipeline {
                     
                     sshCommand remote: remote, command: '''
                         
-                        chmod +x variables.sh
-                        ./variables.sh
+                        while IFS= read -r line; do
+                            export "$line"
+                        done < variables.txt
                         
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
                         env
