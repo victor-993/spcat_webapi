@@ -139,9 +139,27 @@ pipeline {
                 }
             }
         }
+
+        stage('Verify API') {
+            steps {
+                script {
+                    def apiUrl = "http://127.0.0.1:5000"
+
+                    //def response = sh(script: "curl -sL -w \"%{http_code}\" -o /dev/null ${apiUrl}", returnStdout: true)
+
+                    def response = sshCommand remote: remote, command: "curl -sL -w \"%{http_code}\" -o /dev/null ${apiUrl}"
+
+                    if (response.trim() == '200') {
+                        echo "API is running correctly."
+                    } else {
+                        error "API is not running correctly. Rolling back..."
+                    }
+                }
+            }
+        }
     }
 
-    /* post {
+    post {
         failure {
             script {
                 sshCommand remote: remote, command: '''
@@ -168,5 +186,5 @@ pipeline {
                 '''
             }
         }
-    } */
+    }
 }
