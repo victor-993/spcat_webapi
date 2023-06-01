@@ -37,7 +37,10 @@ pipeline {
                     
                     sshCommand remote: remote, command: '''
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
-                        bash
+                        env
+
+                        source ~/.bashrc
+
                         env
                     '''
                     sshCommand remote: remote, command: algo
