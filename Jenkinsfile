@@ -32,13 +32,15 @@ pipeline {
         stage('Verify Api folder and environment') {
             steps {
                 script {
+
+                    def algo = 'echo "${conectino_db}"'
                     
                     sshCommand remote: remote, command: '''
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
                         echo "${conectino_db}"
                         echo "$conectino_db"
                     '''
-                    
+                    sshCommand remote: remote, command: algo
                 }
             }
         }
