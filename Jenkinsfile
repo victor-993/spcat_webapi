@@ -36,15 +36,12 @@ pipeline {
                     def algo = 'echo "${conectino_db}"'
                     
                     sshCommand remote: remote, command: '''
-                        source ~/.bashrc
-                        . ~/.bashrc
+                        ./variables.sh
                         
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
                         env
 
-                        echo $SHELL
                     '''
-                    sshCommand remote: remote, command: "echo ${algo}"
                 }
             }
         }
