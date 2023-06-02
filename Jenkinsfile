@@ -43,7 +43,7 @@ pipeline {
             }
         }
         
-        stage('Stop previous API') {
+        /* stage('Stop previous API') {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
@@ -154,10 +154,10 @@ pipeline {
                     }
                 }
             }
-        }
+        } */
     }
 
-    post {
+    /* post {
         failure {
             script {
                 sshCommand remote: remote, command: '''
@@ -184,5 +184,5 @@ pipeline {
                 '''
             }
         }
-    }
+    } */
 }
