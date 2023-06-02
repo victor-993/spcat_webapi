@@ -22,8 +22,6 @@ pipeline {
                     remote.user = ssh_key_USR
                     remote.name = server_name
                     remote.host = server_host
-
-                    sh 'echo "$conectino_db"'
                     
                 }
             }
