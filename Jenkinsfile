@@ -9,7 +9,6 @@ pipeline {
         server_host = credentials('host_spcat')
         ssh_key = credentials('spcat_key')
         port_api = credentials('api_spcat_port')
-        conectino_db = credentials('connection_db_spcat')
     }
 
     stages {
