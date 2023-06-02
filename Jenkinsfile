@@ -10,7 +10,6 @@ pipeline {
         ssh_key = credentials('spcat_key')
         port_api = credentials('api_spcat_port')
     }
-
     stages {
         stage('Connection to AWS server') {
             steps {
@@ -21,6 +20,8 @@ pipeline {
                     remote.user = ssh_key_USR
                     remote.name = server_name
                     remote.host = server_host
+
+                    echo 'hola mundo'
                     
                 }
             }
