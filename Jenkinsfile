@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Verify Api folder and environment') {
+        /* stage('Verify Api folder and environment') {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
@@ -42,8 +42,8 @@ pipeline {
                 }
             }
         }
-        
-        /* stage('Stop previous API') {
+
+        stage('Stop previous API') {
             steps {
                 script {
                     sshCommand remote: remote, command: '''
