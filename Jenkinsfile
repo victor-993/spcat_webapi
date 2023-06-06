@@ -10,7 +10,6 @@ pipeline {
         ssh_key = credentials('spcat_key')
         port_api = credentials('api_spcat_port')
     }
-
     stages {
         stage('Connection to AWS server') {
             steps {
@@ -21,14 +20,16 @@ pipeline {
                     remote.user = ssh_key_USR
                     remote.name = server_name
                     remote.host = server_host
+
+                    echo 'hola mundo'
                     
                 }
             }
         }
-        stage('Verify Api folder and environment') {
+
+        /* stage('Verify Api folder and environment') {
             steps {
                 script {
-                    
                     sshCommand remote: remote, command: '''
                         # Verify and create the api_SPCAT folder if it does not exist and the virtual environment
                         if [ ! -d api_SPCAT ]; then
@@ -41,7 +42,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Stop previous API') {
             steps {
                 script {
@@ -113,21 +114,20 @@ pipeline {
                 script {
                     def port = port_api
                     sshCommand remote: remote, command: '''
-                        cd ./api_SPCAT
+                        # Configure variables for deployment
+                        while IFS= read -r line; do
+                            export "$line"
+                        done < variables.txt
+
+                        
                         # Activate the virtual environment
+                        cd ./api_SPCAT
                         source env/bin/activate
 
-                        cd ./api_actual
-
-                        env
-
-                        export DEBUG=false
-                        export API_SPCAT_PORT=5000
-                        export CONNECTION_DB=mongodb://AdminSpcat:Spc4t-AdmindB6@localhost:27017/spcat_db?authSource=admin
-
-                        env
+                        
 
                         # Start API
+                        cd ./api_actual
                         nohup python3 api.py > api_spcat.log 2>&1 &
                         
                         # Get the new PID and save it to a file
@@ -137,21 +137,48 @@ pipeline {
                 }
             }
         }
+
+        stage('Verify API') {
+            steps {
+                script {
+                    def apiUrl = "http://127.0.0.1:5000"
+
+                    //def response = sh(script: "curl -sL -w \"%{http_code}\" -o /dev/null ${apiUrl}", returnStdout: true)
+
+                    def response = sshCommand remote: remote, command: "curl -sL -w \"%{http_code}\" -o /dev/null ${apiUrl}"
+
+                    if (response.trim() == '200') {
+                        echo "API is running correctly."
+                    } else {
+                        error "API is not running correctly. Rolling back..."
+                    }
+                }
+            }
+        } */
     }
 
     /* post {
         failure {
             script {
                 sshCommand remote: remote, command: '''
+                    # Configure variables for deployment
+                    while IFS= read -r line; do
+                        export "$line"
+                    done < variables.txt
+
                     # Rollback to the previous API if any step fails
                     cd ./api_SPCAT
                     rm -rf api_actual
                     mv api_antiguo api_actual
 
-                    cd ./api_actual
+                    # Activate the virtual environment
                     source env/bin/activate
 
-                    nohup gunicorn api:app > api_spcat.log 2>&1 &
+                    # Start API
+                    cd ./api_actual
+                    nohup python3 api.py > api_spcat.log 2>&1 &
+                    
+                    # Get the new PID and save it to a file
                     PID_API_SPCAT=$!
                     echo $PID_API_SPCAT > ../pid.txt
                 '''
